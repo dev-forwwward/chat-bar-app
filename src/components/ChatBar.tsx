@@ -65,12 +65,24 @@ function RotatingQuestions({ questions }: { questions: string[] }) {
   )
 }
 
+function PrivateBadge() {
+  return (
+    <div className={styles.privateBadge}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      Private session
+    </div>
+  )
+}
+
 export function ChatBar({
   assistantName = 'Swisscare Assistant',
-  welcomeTitle: _welcomeTitle = 'How can I help you today?',
-  welcomeSubtitle: _welcomeSubtitle = "Need help with your Swisscare plan? I'm here to answer your questions about coverage, options, or eligibility and make sure you get the support you need.",
-  inputPlaceholder: _inputPlaceholder = 'Ask Swisscare Assistant…',
-  inputHint: _inputHint = 'Official insurance documents always prevail.',
+  welcomeTitle = 'How can I help you today?',
+  welcomeSubtitle = "Need help with your Swisscare plan? I'm here to answer your questions about coverage, options, or eligibility and make sure you get the support you need.",
+  inputPlaceholder = 'Ask Swisscare Assistant…',
+  inputHint = 'Official insurance documents always prevail.',
   sampleQuestions = DEFAULT_QUESTIONS,
   poweredByText: _poweredByText = '',
   poweredByUrl: _poweredByUrl = '',
@@ -83,8 +95,24 @@ export function ChatBar({
   onSendMessage: _onSendMessage,
 }: ChatBarProps) {
   const [isOpen, setIsOpen] = React.useState(false)
+  const [firstSent, setFirstSent] = React.useState(false)
+  const [inputValue, setInputValue] = React.useState('')
+  const [isBusy, setIsBusy] = React.useState(false)
+  const [privacyMode, setPrivacyMode] = React.useState(false)
+
   function handleToggle() {
     setIsOpen(prev => !prev)
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  function handleSend() {
+    // Implemented in Task 7. The Send button is visible but non-functional at this stage — expected.
   }
 
   const topInputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -123,7 +151,30 @@ export function ChatBar({
       {/* Chat panel */}
       <div className={styles.chatPanel}>
         <div className={styles.chatInner}>
-          {/* Welcome state + messages + input added in Tasks 6–7 */}
+          {/* Welcome state */}
+          <div className={`${styles.chatWelcome}${firstSent ? ` ${styles.sticky}` : ''}`}>
+            <div className={styles.welcomeTitle}>{welcomeTitle}</div>
+            <div className={styles.welcomeSub}>{welcomeSubtitle}</div>
+            {!firstSent && (
+              <div className={styles.welcomeInputInner}>
+                <div className={`${styles.inputBox}${privacyMode ? ` ${styles.privateMode}` : ''}`}>
+                  {privacyMode && <PrivateBadge />}
+                  <textarea
+                    ref={topInputRef}
+                    placeholder={inputPlaceholder}
+                    value={inputValue}
+                    onChange={e => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    rows={1}
+                  />
+                  <button className={styles.inputSend} onClick={handleSend} disabled={isBusy || !inputValue.trim()} aria-label="Send">
+                    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                  </button>
+                </div>
+                <span className={styles.inputHint}>{inputHint}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

@@ -43,4 +43,21 @@ describe('ChatBar', () => {
     fireEvent.click(closeBtn)
     expect(container.querySelector('#ai-bar')!.className).not.toContain('open')
   })
+
+  it('shows welcome title and subtitle when open and no messages', () => {
+    const { container } = render(
+      <ChatBar welcomeTitle="Hello!" welcomeSubtitle="How can I help?" />
+    )
+    const barStrip = container.querySelector('[class*="barStrip"]')!
+    fireEvent.click(barStrip)
+    expect(screen.getByText('Hello!')).toBeInTheDocument()
+    expect(screen.getByText('How can I help?')).toBeInTheDocument()
+  })
+
+  it('shows input placeholder', () => {
+    const { container } = render(<ChatBar inputPlaceholder="Type here…" />)
+    const barStrip = container.querySelector('[class*="barStrip"]')!
+    fireEvent.click(barStrip)
+    expect(screen.getByPlaceholderText('Type here…')).toBeInTheDocument()
+  })
 })
