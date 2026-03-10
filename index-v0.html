@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swisscare ® | Official website</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: Atypbldisplay;
+  src: url("https://cdn.prod.website-files.com/6850235ccb1257ecee2e0e0d/68502eb327be5eb748e80466_AtypBLDisplay-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+</style>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --yellow: #f8ef78;
+  --pink: #e8579a;
+  --dark: #111;
+  --bar-h: 54px;
+  --nav-h: 64px;
+  --chat-bg: #212121;
+  --user-bubble: #303030;
+  --ai-bubble: transparent;
+  --border: #383838;
+  --text-primary: #ececec;
+  --text-secondary: #8e8ea0;
+  --input-bg: #2f2f2f;
+  --accent: #f8ef78;
+}
+
+html { font-family: Atypbldisplay, Georgia, sans-serif; }
+body { overflow-x: hidden; padding-bottom: var(--bar-h); font-family: Atypbldisplay, Georgia, sans-serif; }
+
+/* ══════════════════════════════════════
+   TOP NAV BAR (clean transparent)
+══════════════════════════════════════ */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  background: rgba(205, 217, 238, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 44px;
+}
+.topbar-logo {
+  font-size: 24px; font-weight: 500; letter-spacing: 0.5px;
+  color: var(--dark); white-space: nowrap; text-transform: uppercase;
+  font-family: Atypbldisplay, Georgia, sans-serif;
+}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.topbar-user {
+  background: transparent; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--dark); padding: 4px;
+}
+.topbar-user svg { width: 20px; height: 20px; fill: currentColor; }
+.topbar-menu {
+  background: transparent; color: var(--dark);
+  border: none; padding: 4px;
+  cursor: pointer;
+  display: flex; align-items: center;
+}
+.topbar-menu .ham { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
+.topbar-menu .ham span {
+  display: block; height: 2px; background: var(--dark); border-radius: 2px;
+  transition: width .3s ease, opacity .3s ease, transform .3s ease;
+}
+.topbar-menu .ham span:nth-child(1) { width: 22px; }
+.topbar-menu .ham span:nth-child(2) { width: 14px; }
+.topbar-menu .ham span:nth-child(3) { width: 18px; }
+.topbar-menu:hover .ham span:nth-child(1) { width: 18px; }
+.topbar-menu:hover .ham span:nth-child(2) { width: 22px; }
+.topbar-menu:hover .ham span:nth-child(3) { width: 14px; }
+
+
+/* ══════════════════════════════════════
+   AI BAR — unified expanding element
+══════════════════════════════════════ */
+#ai-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 600;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  transition: height .5s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+  background: var(--chat-bg);
+}
+#ai-bar.open { height: 100vh; }
+
+/* Top bar: logo + close — hidden when closed */
+.ai-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+  background: var(--chat-bg);
+  height: 0; overflow: hidden; opacity: 0;
+  transition: height .3s ease, opacity .3s ease, padding .3s ease;
+}
+#ai-bar.open .ai-topbar {
+  height: 56px; padding: 0 24px; opacity: 1;
+}
+.ai-topbar-logo {
+  font-family: Atypbldisplay, Georgia, sans-serif;
+  font-size: 18px; font-weight: 500; letter-spacing: 0.5px;
+  color: #fff; text-transform: uppercase;
+}
+
+/* Chat content fills remaining space */
+.chat-panel {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  opacity: 0;
+  transition: opacity .3s ease .15s;
+}
+#ai-bar.open .chat-panel { opacity: 1; }
+.chat-panel, .chat-panel * { font-family: 'Inter', sans-serif; }
+
+.chat-inner {
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+
+/* Bottom bar — always visible at bottom */
+.bar-strip {
+  height: 60px;
+  min-height: 60px;
+  flex-shrink: 0;
+  background: #0e0e0e;
+  display: flex; align-items: center;
+  padding: 0 20px;
+  cursor: pointer; user-select: none;
+  position: relative; overflow: hidden;
+}
+#ai-bar.open .bar-strip { cursor: default; }
+
+/* Aurora fades out when open */
+.aurora-blob { transition: opacity .5s ease; }
+#ai-bar.open .aurora-blob { opacity: 0 !important; }
+#ai-bar.open .bar-strip::after { opacity: 0; transition: opacity .5s ease; }
+
+/* Closed content: centered pulse + text + arrow */
+.bar-closed-content {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+  padding: 0 20px;
+  z-index: 2;
+  transition: opacity .25s ease;
+}
+#ai-bar.open .bar-closed-content { opacity: 0; pointer-events: none; }
+
+/* Open content: pulse + name left, settings right */
+.bar-open-content {
+  display: flex; align-items: center; gap: 12px;
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+  padding: 0 20px;
+  z-index: 2;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s ease .2s;
+}
+#ai-bar.open .bar-open-content { opacity: 1; pointer-events: auto; }
+
+.bar-open-left {
+  display: flex; flex-direction: column; gap: 1px;
+  margin-right: auto;
+}
+.bar-open-name {
+  color: #fff; font-size: 0.82rem; font-weight: 400;
+  font-family: 'Inter', sans-serif; white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+}
+.bar-online {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.68rem; font-weight: 400;
+  color: rgba(255,255,255,0.45);
+}
+.bar-online-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #4cde80;
+  box-shadow: 0 0 6px rgba(76,222,128,0.7);
+  animation: onlinePulse 2.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes onlinePulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.bar-open-settings {
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* Full-width aurora blobs — 4 Swisscare colors alternating L/R */
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 3s ease;
+  pointer-events: none;
+  z-index: 0;
+  width: 50%; height: 300%;
+  top: -100%;
+  filter: blur(26px);
+}
+.bar-strip.aurora-on .aurora-blob { opacity: 1; }
+
+/* 1 — Yellow #f8ef78 — starts LEFT, drifts toward center-right */
+.aurora-blob-1 {
+  left: -10%;
+  background: radial-gradient(ellipse at center, rgba(248,239,120,0.62) 0%, transparent 65%);
+  animation: pingpong-l 9s ease-in-out infinite;
+}
+/* 2 — Pink #ff99cd — starts RIGHT, drifts toward center-left */
+.aurora-blob-2 {
+  right: -10%;
+  background: radial-gradient(ellipse at center, rgba(255,153,205,0.58) 0%, transparent 65%);
+  animation: pingpong-r 11s ease-in-out infinite;
+}
+/* 3 — Blue #cbdcf4 — starts center-left, drifts right */
+.aurora-blob-3 {
+  left: 15%;
+  background: radial-gradient(ellipse at center, rgba(203,220,244,0.55) 0%, transparent 65%);
+  animation: pingpong-l 13s ease-in-out infinite 1.5s;
+}
+/* 4 — Green (complementary to Swisscare palette) — starts right, drifts left */
+.aurora-blob-4 {
+  right: 10%;
+  background: radial-gradient(ellipse at center, rgba(168,225,180,0.52) 0%, transparent 65%);
+  animation: pingpong-r 10s ease-in-out infinite 2.5s;
+}
+
+/* Left-anchored blobs ping left→right→left */
+@keyframes pingpong-l {
+  0%,100% { transform: translateX(0%);   }
+  50%      { transform: translateX(55%);  }
+}
+/* Right-anchored blobs ping right→left→right */
+@keyframes pingpong-r {
+  0%,100% { transform: translateX(0%);   }
+  50%      { transform: translateX(-55%); }
+}
+
+/* Light dark veil — keep text readable without killing colors */
+.bar-strip::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(10,10,10,0.38);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Orbiting dots */
+.neo-pulse {
+  width: 36px; height: 36px;
+  flex-shrink: 0; z-index: 2;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.neo-pulse-ring {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  position: absolute;
+  top: 0; left: 0;
+  animation: orbitSpin 3s linear infinite;
+}
+.neo-pulse-ring::before {
+  content: '';
+  position: absolute;
+  width: 9px; height: 9px;
+  background: #f8ef78;
+  border-radius: 50%;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+}
+.neo-pulse-ring:nth-child(2) {
+  animation: orbitSpin 3s linear infinite reverse;
+  animation-delay: -1s;
+}
+.neo-pulse-ring:nth-child(2)::before {
+  background: #ff99cd;
+  width: 7px; height: 7px;
+}
+.neo-pulse-ring:nth-child(3) {
+  animation: orbitSpin 4s linear infinite;
+  animation-delay: -2s;
+}
+.neo-pulse-ring:nth-child(3)::before {
+  background: #cbdcf4;
+  width: 6px; height: 6px;
+  top: auto; bottom: 0;
+}
+@keyframes orbitSpin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Bar text */
+.bar-text {
+  color: rgba(255,255,255,0.9); font-size: 0.82rem; font-weight: 500;
+  z-index: 2; position: relative; letter-spacing: 0.2px;
+  display: flex; align-items: center; gap: 8px;
+}
+.bar-text-name { color: #fff; font-weight: 400; }
+.bar-text-powered {
+  color: rgba(255,255,255,0.45); font-size: 0.68rem; font-weight: 400;
+  font-family: 'Inter', sans-serif;
+}
+.bar-text-powered a {
+  color: rgba(255,255,255,0.45); text-decoration: none;
+  transition: color .2s;
+}
+.bar-text-powered a:hover { color: rgba(255,255,255,0.75); }
+
+/* Rotating questions */
+.bar-questions {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  height: 18px;
+  min-width: 240px;
+}
+.bar-q {
+  position: absolute;
+  left: 0; top: 0;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  line-height: 18px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.bar-q.bar-q-active {
+  opacity: 1;
+}
+
+/* Claude-style send button — solid yellow circle, animated */
+.neo-send {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: #f8ef78;
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; z-index: 2; cursor: pointer;
+  transition: transform .15s, background .2s;
+  animation: sendGlow 3s ease-in-out infinite;
+  margin-left: 20px;
+}
+.neo-send:hover {
+  transform: scale(1.1);
+  background: #f8ef78;
+  animation: none;
+  box-shadow: 0 0 0 5px rgba(248,239,120,0.35);
+}
+.neo-send svg {
+  width: 15px; height: 15px;
+  animation: arrowNudge 3s ease-in-out infinite;
+}
+@keyframes sendGlow {
+  0%,100% { box-shadow: 0 0 0 0px rgba(248,239,120,0.5); }
+  50%      { box-shadow: 0 0 0 5px rgba(248,239,120,0); }
+}
+@keyframes arrowNudge {
+  0%,100% { transform: translateY(0px);  }
+  40%      { transform: translateY(-2px); }
+  60%      { transform: translateY(-2px); }
+}
+
+/* ── Chat header (bottom settings bar) ── */
+.chat-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 20px;
+  flex-shrink: 0;
+  background: var(--chat-bg);
+  position: relative;
+}
+.chat-header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    #f8ef78 0%,
+    #ff99cd 25%,
+    #cbdcf4 50%,
+    #a8e1b4 75%,
+    #f8ef78 100%);
+  background-size: 200% 100%;
+  animation: headerLine 3s linear infinite;
+}
+@keyframes headerLine {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+.ch-left { display: flex; align-items: center; gap: 10px; }
+/* Data retention badge */
+.ch-retention {
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap; cursor: pointer;
+  position: static; /* let popup use chat-header as anchor */
+  color: rgba(255,255,255,0.3);
+  transition: color .2s;
+  user-select: none;
+}
+.ch-retention:hover { color: rgba(255,255,255,0.55); }
+.ch-retention.active { color: #f8ef78; }
+.ch-retention svg { width: 13px; height: 13px; flex-shrink: 0; }
+.ch-retention-label {
+  font-size: 0.7rem; font-weight: 400; letter-spacing: 0.01em;
+}
+
+/* Retention popup — anchored to chat-header via fixed bottom */
+.retention-popup {
+  display: none;
+  position: fixed;
+  bottom: 50px; /* sit just above the footer bar */
+  right: 120px; /* roughly align to where shield sits */
+  width: 280px;
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 16px 16px 13px;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  animation: popupIn 0.18s ease forwards;
+}
+.retention-popup.open { display: block; }
+@keyframes popupIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.retention-popup-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: #f8ef78; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.retention-popup-title svg { width: 11px; height: 11px; }
+.retention-popup-body {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.69rem; font-weight: 400;
+  color: rgba(255,255,255,0.48);
+  line-height: 1.65; margin-bottom: 13px;
+}
+.retention-popup-body strong { color: rgba(255,255,255,0.72); font-weight: 500; }
+.retention-delete-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255,80,80,0.3);
+  color: rgba(255,110,110,0.65);
+  border-radius: 5px;
+  padding: 7px 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem; font-weight: 500;
+  cursor: pointer; letter-spacing: 0.02em;
+  transition: background .2s, color .2s, border-color .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.retention-delete-btn:hover {
+  background: rgba(255,80,80,0.07);
+  border-color: rgba(255,80,80,0.55);
+  color: rgba(255,130,130,0.9);
+}
+.retention-delete-btn svg { width: 11px; height: 11px; }
+.retention-delete-btn.done {
+  border-color: rgba(100,200,100,0.3);
+  color: rgba(120,220,120,0.7);
+  pointer-events: none;
+}
+
+
+.ch-name { color: rgba(255,255,255,0.55); font-size: 0.75rem; font-weight: 400; font-family: 'Inter', sans-serif; letter-spacing: 0.01em; }
+.ch-model { color: rgba(255,255,255,0.25); font-size: 0.68rem; margin-top: 2px; font-family: 'Inter', sans-serif; }
+
+/* Right controls group — equal 12px gaps, perfectly even */
+.ch-right { display: flex; align-items: center; gap: 12px; }
+
+/* "Settings :" label */
+.ch-settings-label {
+  font-size: 0.65rem; font-weight: 500; font-family: 'Inter', sans-serif;
+  color: rgba(255,255,255,0.2); letter-spacing: 0.06em; text-transform: uppercase;
+  white-space: nowrap; user-select: none;
+}
+
+/* Thin divider after New chat button */
+.ch-divider {
+  width: 1px; height: 14px;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* New chat pill button */
+.ch-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.4);
+  border-radius: 6px; padding: 4px 11px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem; font-weight: 400;
+  cursor: pointer; transition: border-color .2s, color .2s; white-space: nowrap;
+  line-height: 1.4;
+}
+.ch-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.75); }
+
+/* Eye tooltip */
+.ch-eye-btn { position: relative; }
+.ch-eye-btn::after {
+  content: "Private session — Once activated, your conversation will not be saved or logged on Swisscare's side.";
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  width: 230px;
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.6);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.67rem;
+  font-weight: 400;
+  line-height: 1.6;
+  padding: 10px 13px;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: normal;
+  text-align: left;
+  z-index: 9999;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+/* small arrow pointing down */
+.ch-eye-btn::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 4px);
+  right: 10px;
+  border: 5px solid transparent;
+  border-top-color: rgba(255,255,255,0.07);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 9999;
+}
+.ch-eye-btn:hover::after,
+.ch-eye-btn:hover::before { opacity: 1; transform: translateY(0); transition-delay: 1s; }
+.ch-eye-btn {
+  background: transparent; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.3);
+  width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  transition: color .2s, background .2s;
+  flex-shrink: 0; padding: 0;
+}
+.ch-eye-btn:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.05); }
+.ch-eye-btn.active { color: #f8ef78 !important; }
+.ch-eye-btn.active svg { filter: drop-shadow(0 0 4px rgba(248,239,120,0.45)); }
+.ch-eye-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* Download icon button — same as eye */
+.ch-icon-btn {
+  background: transparent; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.3);
+  width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; transition: color .2s, background .2s;
+  flex-shrink: 0; padding: 0;
+}
+.ch-icon-btn:hover { color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.05); }
+.ch-icon-btn svg { width: 13px; height: 13px; }
+
+/* Close yellow circle */
+.ch-close {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: transparent; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background .2s;
+  margin-left: 6px;
+}
+.ch-close:hover { background: rgba(255,255,255,0.08); }
+.ch-close svg { width: 20px; height: 20px; stroke: rgba(255,255,255,0.6); transition: stroke .2s; }
+.ch-close:hover svg { stroke: rgba(255,255,255,0.95); }
+
+/* ── Messages area ── */
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 24px 0;
+  display: flex; flex-direction: column; gap: 4px;
+  scrollbar-width: thin; scrollbar-color: #333 transparent;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 2px; }
+
+/* Message rows */
+.msg-row {
+  display: flex; padding: 4px 0;
+  animation: fadeup .25s ease;
+  max-width: 700px; width: 100%; margin: 0 auto; box-sizing: border-box;
+}
+@keyframes fadeup { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
+
+/* AI messages — left aligned, white text */
+/* .msg-row.ai alignment handled in labels block above */
+.msg-row.ai .row-content {
+  flex: 1; color: #ffffff;
+  font-size: 0.93rem; line-height: 1.7; padding-top: 4px;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+.msg-row.ai .row-content p { margin-bottom: 8px; }
+.msg-row.ai .row-content p:last-child { margin-bottom: 0; }
+
+/* Message labels */
+.msg-label {
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-bottom: 5px; font-family: 'Inter', sans-serif;
+  color: rgba(255,255,255,0.5);
+  padding: 0;
+}
+/* User row: label + bubble stacked, right-aligned */
+.msg-row.user {
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: 4px;
+}
+/* AI row: label + text stacked, left-aligned */
+.msg-row.ai {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.msg-row.ai .msg-label {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* AI action bar under each answer */
+.msg-actions {
+  display: flex; gap: 10px; margin-top: 8px; align-items: center;
+}
+.msg-act {
+  background: transparent; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.25); padding: 2px;
+  display: flex; align-items: center; transition: color .2s;
+}
+.msg-act:hover { color: rgba(255,255,255,0.7); }
+.msg-act svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* User messages — black text, yellow bubble, 8px corners, like Claude */
+.msg-row.user { justify-content: flex-end; }
+.msg-row.user .row-content {
+  background: #f8ef78;
+  color: #111;
+  font-size: 0.95rem; line-height: 1.55; font-weight: 400;
+  max-width: 80%;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Claude-style thinking shimmer */
+.typing-row {
+  padding: 4px 0; max-width: 700px; width: 100%; margin: 0 auto;
+}
+.thinking-shimmer {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem; font-weight: 400;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.15) 0%,
+    rgba(255,255,255,0.7) 35%,
+    rgba(255,255,255,0.15) 65%,
+    rgba(255,255,255,0.1) 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 1.8s ease-in-out infinite;
+  letter-spacing: 0.01em;
+}
+@keyframes shimmerText {
+  0%   { background-position: 100% 0%; }
+  100% { background-position: -100% 0%; }
+}
+
+/* ── Welcome state — centered, input inside ── */
+.chat-welcome {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  flex: 1; padding: 40px 20px; gap: 0;
+}
+/* Once chat starts, welcome sticks to top */
+.chat-welcome.sticky {
+  flex: 0; justify-content: flex-start;
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+/* Input inside welcome, shown only on first open */
+.welcome-input-inner {
+  width: 100%; max-width: 700px;
+  margin-top: 32px;
+}
+/* Input embedded in welcome — same style as bottom input */
+.welcome-input-wrap {
+  width: 100%; max-width: 680px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.welcome-logo {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #f8ef78, #e8d800);
+  display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+}
+.welcome-title { color: var(--text-primary); font-size: 2.22rem; font-weight: 300; text-align: center; line-height: 1.2; letter-spacing: -0.5px; font-family: Atypbldisplay, Georgia, sans-serif !important; }
+.welcome-sub { color: rgba(255,255,255,0.38); font-size: 0.95rem; text-align: center; max-width: 420px; line-height: 1.5; margin-top: 10px; font-weight: 300; font-family: Atypbldisplay, Georgia, sans-serif !important; }
+.welcome-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 480px; }
+.chip {
+  background: #2a2a2a; border: 1px solid var(--border); color: var(--text-secondary);
+  border-radius: 10px; padding: 8px 14px; font-family: Atypbldisplay, Georgia, sans-serif;
+  font-size: 0.8rem; cursor: pointer; transition: all .2s; text-align: left; line-height: 1.35;
+}
+.chip:hover { background: #333; border-color: #4a4a4a; color: var(--text-primary); }
+
+/* ── Bottom input area — centered like Claude/GPT ── */
+.chat-input-area {
+  flex-shrink: 0; padding: 12px 20px 14px;
+  background: var(--chat-bg);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.input-box {
+  width: 100%; max-width: 700px;
+  background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 16px; padding: 12px 14px 12px 18px;
+  display: flex; align-items: flex-end; gap: 10px;
+  transition: border-color .3s ease;
+  position: relative;
+}
+.input-box.private-mode {
+  border: 1px dashed rgba(248,239,120,0.35);
+  box-shadow: none;
+}
+
+/* Private session badge — centered top of input */
+.private-badge {
+  position: absolute;
+  top: -11px; left: 50%; transform: translateX(-50%);
+  background: #f8ef78;
+  color: #111;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.63rem; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 2px 10px 2px 8px;
+  border-radius: 20px;
+  display: none; align-items: center; gap: 5px;
+  white-space: nowrap;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+}
+.private-badge svg { width: 9px; height: 9px; flex-shrink: 0; }
+.input-box.private-mode .private-badge { display: flex; }
+
+.input-box:focus-within { border-color: #4a4a4a; }
+.input-box textarea {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--text-primary); font-family: 'Inter', sans-serif;
+  font-size: 0.92rem; line-height: 1.5; resize: none;
+  min-height: 68px; max-height: 200px; scrollbar-width: none;
+}
+.input-box textarea::-webkit-scrollbar { display: none; }
+.input-box textarea::placeholder { color: #555; }
+.input-send {
+  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+  background: var(--accent); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .2s, transform .15s;
+}
+.input-send:hover { opacity: .85; transform: scale(1.05); }
+.input-send:disabled { background: #2a2a2a; cursor: not-allowed; transform: none; }
+.input-send svg { width: 15px; height: 15px; fill: #111; }
+/* Word-by-word fade — only the last paragraph animates */
+.msg-row.ai .row-content p {
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+.msg-row.ai .row-content p:last-child {
+  animation: wordFadeIn 0.18s ease forwards;
+}
+@keyframes wordFadeIn {
+  from { opacity: 0.85; }
+  to   { opacity: 1; }
+}
+
+.input-hint { color: rgba(255,255,255,0.2); font-size: 0.72rem; font-family: Inter, sans-serif; text-align: center; letter-spacing: 0.01em; width: 100%; display: block; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+
+<!-- ════════════════════════════════
+     AI BAR — single unified element
+════════════════════════════════ -->
+<div id="ai-bar">
+
+  <!-- TOP BAR: logo + close (only visible when open) -->
+  <div class="ai-topbar" id="aiTopbar">
+    <div class="ai-topbar-logo">Swisscare</div>
+    <button class="ch-close" id="closeBtn" title="Close" onclick="toggleChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- CHAT CONTENT (welcome + messages + input) -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-inner" id="chatInner">
+
+      <!-- Welcome -->
+      <div id="welcomeState" class="chat-welcome">
+        <div class="welcome-title">How can I help you today?</div>
+        <div class="welcome-sub">Need help with your Swisscare plan? I'm here to answer your questions about coverage, options, or eligibility and make sure you get the support you need.</div>
+        <div class="welcome-input-inner">
+          <div class="input-box" id="inputBoxTop">
+            <div class="private-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              Private session
+            </div>
+            <textarea id="chatInput" placeholder="Ask Swisscare Assistant…" rows="1"></textarea>
+            <button class="input-send" id="sendBtn" onclick="sendMessage()" title="Send">
+              <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+          </div>
+          <span class="input-hint">Official insurance documents always prevail.</span>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages" id="chatMsgs" style="display:none; flex:1;"></div>
+
+      <!-- Bottom input -->
+      <div class="chat-input-area" id="chatInputArea" style="display:none;">
+        <div class="input-box" id="inputBoxBottom">
+          <div class="private-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Private session
+          </div>
+          <textarea id="chatInputBottom" placeholder="Ask Swisscare Assistant…" rows="1"></textarea>
+          <button class="input-send" id="sendBtnBottom" onclick="sendMessage()" title="Send">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+        <span class="input-hint">Official insurance documents always prevail.</span>
+      </div>
+
+      <!-- Retention popup -->
+      <div class="retention-popup" id="retentionPopup">
+        <div class="retention-popup-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Data Retention Policy
+        </div>
+        <div class="retention-popup-body">
+          Your conversation is securely stored for <strong>7 days</strong>, after which it is automatically and permanently deleted from Swisscare's servers.<br><br>
+          This limited retention period allows us to ensure service quality and continuously improve the performance of our assistant. No data is ever shared with third parties.
+          <br><br>If you wish to remove your conversation data immediately, you may do so below.
+        </div>
+        <button class="retention-delete-btn" id="retentionDeleteBtn" onclick="deleteDataNow(event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+          </svg>
+          Delete my data now
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR — always visible, becomes settings footer when open -->
+  <div class="bar-strip aurora-on" id="barStrip" onclick="toggleChat()">
+    <div class="aurora-blob aurora-blob-1"></div>
+    <div class="aurora-blob aurora-blob-2"></div>
+    <div class="aurora-blob aurora-blob-3"></div>
+    <div class="aurora-blob aurora-blob-4"></div>
+
+    <!-- Closed state: pulse + name + questions + arrow -->
+    <div class="bar-closed-content" id="barClosedContent">
+      <div class="neo-pulse">
+        <div class="neo-pulse-ring"></div>
+        <div class="neo-pulse-ring"></div>
+        <div class="neo-pulse-ring"></div>
+      </div>
+      <div class="bar-text">
+        <span class="bar-text-name">Swisscare Assistant</span>
+        <span class="bar-text-sep">|</span>
+        <span class="bar-questions" id="barQuestions">
+          <span class="bar-q">How much cost the insurance in Spain?</span>
+          <span class="bar-q">Can you help with canton of St-Gallen?</span>
+          <span class="bar-q">What is a cantonal exemption process?</span>
+        </span>
+      </div>
+      <div class="neo-send" id="neoSend" onclick="event.stopPropagation(); toggleChat()">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 20V4M12 4L5 11M12 4L19 11" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Open state: pulse + name + settings -->
+    <div class="bar-open-content" id="barOpenContent">
+      <div class="neo-pulse">
+        <div class="neo-pulse-ring"></div>
+        <div class="neo-pulse-ring"></div>
+        <div class="neo-pulse-ring"></div>
+      </div>
+      <div class="bar-open-left">
+        <div class="bar-open-name">Swisscare Assistant</div>
+        
+      </div>
+      <div class="bar-open-settings">
+        <span class="ch-settings-label" style="display:none">Settings :</span>
+        <button class="ch-btn" onclick="event.stopPropagation(); clearChat()">New chat</button>
+        <div class="ch-divider"></div>
+        <button class="ch-icon-btn ch-eye-btn" id="eyeBtn" onclick="event.stopPropagation(); togglePrivacy()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+            <line class="eye-slash" x1="3" y1="3" x2="21" y2="21" opacity="0" style="transition:opacity .2s"/>
+          </svg>
+        </button>
+        <div class="ch-divider" id="retentionDividerBefore"></div>
+        <div class="ch-retention" id="retentionBadge" onclick="event.stopPropagation(); toggleRetentionPopup(event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span class="ch-retention-label">7 days</span>
+        </div>
+        <div class="ch-divider" id="retentionDividerAfter"></div>
+        <button class="ch-icon-btn" onclick="event.stopPropagation(); saveChat()" title="Save chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Rotating questions in bar
+  (function() {
+    const questions = Array.from(document.querySelectorAll('.bar-q'));
+    let current = 0;
+    questions[0].classList.add('bar-q-active');
+
+    setInterval(() => {
+      questions[current].classList.remove('bar-q-active');
+      current = (current + 1) % questions.length;
+      questions[current].classList.add('bar-q-active');
+    }, 3200);
+  })();
+  let isOpen = false;
+  let isBusy = false;
+  let history = [];
+  let firstSent = false;
+
+  const panel       = document.getElementById('chatPanel');
+  const msgsEl      = document.getElementById('chatMsgs');
+  const welcome     = document.getElementById('welcomeState');
+  const inputArea   = document.getElementById('chatInputArea');
+  const input       = document.getElementById('chatInput');
+  const sendBtn     = document.getElementById('sendBtn');
+  const inputBottom = document.getElementById('chatInputBottom');
+  const sendBtnBot  = document.getElementById('sendBtnBottom');
+
+  function activeInput() { return firstSent ? inputBottom : input; }
+
+  function setupInput(el) {
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    el.addEventListener('input', () => {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+    });
+  }
+  setupInput(input);
+  setupInput(inputBottom);
+
+  // Aurora control — toggle CSS class for smooth fade in/out
+  // Aurora always on via HTML class
+
+
+  function toggleChat() {
+    isOpen = !isOpen;
+    const aiBar = document.getElementById('ai-bar');
+    aiBar.classList.toggle('open', isOpen);
+    if (isOpen) {
+      setTimeout(() => input.focus(), 500);
+    }
+  }
+
+  document.getElementById('closeBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    isOpen = false;
+    document.getElementById('ai-bar').classList.remove('open');
+  });
+
+  function saveChat() {
+    const msgs = Array.from(document.querySelectorAll('.msg-row')).map(row => {
+      const isUser = row.classList.contains('user');
+      const text = row.querySelector('.row-content')?.innerText || '';
+      return (isUser ? 'You: ' : 'Swisscare: ') + text;
+    }).join('\n\n');
+    if (!msgs) return;
+    const blob = new Blob([msgs], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'swisscare-chat.txt';
+    a.click();
+  }
+
+  let privacyMode = false;
+  function togglePrivacy() {
+    privacyMode = !privacyMode;
+    const btn   = document.getElementById('eyeBtn');
+    const slash = btn ? btn.querySelector('.eye-slash') : null;
+    if (btn)   btn.classList.toggle('active', privacyMode);
+    if (slash) slash.style.opacity = privacyMode ? '1' : '0';
+
+    // Yellow dashed border + badge on input boxes
+    ['inputBoxTop', 'inputBoxBottom'].forEach(id => {
+      const box = document.getElementById(id);
+      if (box) box.classList.toggle('private-mode', privacyMode);
+    });
+
+    // Hide retention badge + its dividers entirely when private session is on
+    const retentionBadge = document.getElementById('retentionBadge');
+    const retentionBefore = document.getElementById('retentionDividerBefore');
+    const retentionAfter = document.getElementById('retentionDividerAfter');
+    [retentionBadge, retentionBefore, retentionAfter].forEach(el => {
+      if (el) el.style.display = privacyMode ? 'none' : '';
+    });
+    if (retentionBadge) retentionBadge.style.display = privacyMode ? 'none' : 'flex';
+  }
+
+  function toggleRetentionPopup(e) {
+    e.stopPropagation();
+    const popup  = document.getElementById('retentionPopup');
+    const badge  = document.getElementById('retentionBadge');
+    const isOpen = popup.classList.contains('open');
+    popup.classList.toggle('open', !isOpen);
+    badge.classList.toggle('active', !isOpen);
+    // close on outside click
+    if (!isOpen) {
+      setTimeout(() => document.addEventListener('click', closeRetentionPopup), 0);
+    }
+  }
+  function closeRetentionPopup() {
+    document.getElementById('retentionPopup')?.classList.remove('open');
+    document.getElementById('retentionBadge')?.classList.remove('active');
+    document.removeEventListener('click', closeRetentionPopup);
+  }
+  function deleteDataNow(e) {
+    e.stopPropagation();
+    const btn = document.getElementById('retentionDeleteBtn');
+    btn.classList.add('done');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Data deleted';
+    clearChat();
+    // TODO: call your API to delete session data server-side
+    setTimeout(closeRetentionPopup, 1800);
+  }
+
+  function clearChat() {
+    // Reset all state
+    history = [];
+    firstSent = false;
+
+    // Clear messages
+    msgsEl.innerHTML = '';
+    msgsEl.style.display = 'none';
+
+    // Restore welcome to initial centered state
+    welcome.classList.remove('sticky');
+    const wii = welcome.querySelector('.welcome-input-inner');
+    if (wii) wii.style.display = '';
+
+    // Hide bottom input
+    inputArea.style.display = 'none';
+
+    // Clear both inputs
+    input.value = '';
+    input.style.height = 'auto';
+    inputBottom.value = '';
+    inputBottom.style.height = 'auto';
+
+    // Focus welcome input
+    setTimeout(() => input.focus(), 100);
+  }
+
+
+
+  function useChip(btn) {
+    // Strip the emoji prefix for cleaner message
+    const text = btn.textContent.replace(/^[^\s]+\s/, '').trim();
+    input.value = text;
+    sendMessage();
+  }
+
+  function sendMessage() {
+    const ai = activeInput();
+    const text = ai.value.trim();
+    if (!text || isBusy) return;
+
+    // First message: collapse welcome, hide welcome input, show bottom input
+    if (!firstSent) {
+      firstSent = true;
+      welcome.classList.add('sticky');
+      const wii = welcome.querySelector('.welcome-input-inner');
+      if (wii) wii.style.display = 'none';
+      inputArea.style.display = 'flex';
+      msgsEl.style.display = 'flex';
+    }
+
+    addMessage(text, 'user');
+    history.push({ role: 'user', content: text });
+    ai.value = '';
+    ai.style.height = 'auto';
+
+    isBusy = true;
+    sendBtn.disabled = true;
+    sendBtnBot.disabled = true;
+    const typingEl = addTyping();
+
+    fetchAI().then(reply => {
+      typingEl.remove();
+      addMessage(reply, 'ai');
+      history.push({ role: 'assistant', content: reply });
+      isBusy = false;
+      sendBtn.disabled = false;
+      sendBtnBot.disabled = false;
+      inputBottom.focus();
+    }).catch(() => {
+      typingEl.remove();
+      addMessage("Sorry, I'm having a connection issue. Please try again.", 'ai');
+      isBusy = false;
+      sendBtn.disabled = false;
+      sendBtnBot.disabled = false;
+    });
+  }
+
+  function addMessage(text, role) {
+    msgsEl.style.display = 'flex';
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + role;
+
+    if (role === 'ai') {
+      const content = document.createElement('div');
+      content.className = 'row-content';
+
+      const actions = document.createElement('div');
+      actions.className = 'msg-actions';
+      actions.style.opacity = '0'; // hidden until typing done
+      actions.innerHTML =
+        '<button class="msg-act" title="Helpful"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg></button>' +
+        '<button class="msg-act" title="Not helpful"><svg viewBox="0 0 24 24"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/></svg></button>' +
+        '<button class="msg-act" title="Copy"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>';
+
+      actions.children[0].addEventListener('click', function(){ this.style.color='rgba(255,255,255,0.9)'; });
+      actions.children[1].addEventListener('click', function(){ this.style.color='rgba(255,255,255,0.9)'; });
+      actions.children[2].addEventListener('click', function(){
+        navigator.clipboard.writeText(content.innerText);
+        this.style.color='rgba(255,255,255,0.9)';
+      });
+
+      const label = document.createElement('div');
+      label.className = 'msg-label';
+      label.textContent = 'Swisscare';
+      const wrapper = document.createElement('div');
+      wrapper.style.maxWidth = '80%';
+      wrapper.style.width = '100%';
+      wrapper.appendChild(label);
+      wrapper.appendChild(content);
+      wrapper.appendChild(actions);
+      row.appendChild(wrapper);
+      msgsEl.appendChild(row);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+
+      // — Word-by-word streaming like Claude.ai —
+      const words = text.split(' ');
+      let i = 0;
+      let displayed = '';
+
+      function typeNext() {
+        if (i < words.length) {
+          displayed += (i === 0 ? '' : ' ') + words[i++];
+          content.innerHTML = formatText(displayed);
+          msgsEl.scrollTop = msgsEl.scrollHeight;
+          setTimeout(typeNext, 38);
+        } else {
+          // done — show actions
+          actions.style.opacity = '1';
+          actions.style.transition = 'opacity 0.4s ease';
+        }
+      }
+      setTimeout(typeNext, 80);
+
+    } else {
+      const label = document.createElement('div');
+      label.className = 'msg-label';
+      label.textContent = 'You';
+      const content = document.createElement('div');
+      content.className = 'row-content';
+      content.innerHTML = escapeHtml(text);
+      row.appendChild(label);
+      row.appendChild(content);
+      msgsEl.appendChild(row);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
+    return row;
+  }
+
+  function addTyping() {
+    const row = document.createElement('div');
+    row.className = 'typing-row';
+    const shimmer = document.createElement('span');
+    shimmer.className = 'thinking-shimmer';
+    shimmer.textContent = 'Thinking…';
+    row.appendChild(shimmer);
+    msgsEl.appendChild(row);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    return row;
+  }
+
+  function formatText(text) {
+    // Simple markdown-ish formatting
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .split('\n\n').map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+  }
+
+  function escapeHtml(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  }
+
+  // ── 7en.ai config (uncomment when CORS is fixed) ──
+  // const SEVEN_EN_AGENT_ID = 643;
+  // const SEVEN_EN_API_KEY  = 'YOUR_API_KEY_HERE';
+  // const SEVEN_EN_SESSION  = 'sc-' + Math.random().toString(36).slice(2);
+  // ───────────────────────────────────────────────
+
+  async function fetchAI() {
+    // Demo mode — lorem ipsum responses
+    const responses = [
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.\n\nNunc aliquet bibendum enim facilisis gravida neque convallis. Amet cursus sit amet dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames.',
+      'Consectetur adipiscing elit duis tristique sollicitudin nibh sit amet. Vitae sapien pellentesque habitant morbi tristique senectus et netus.\n\nSed blandit libero volutpat sed cras ornare arcu. Nibh ipsum consequat nisl vel pretium lectus quam id. Nunc non blandit massa enim nec dui nunc.',
+      'Duis ultricies lacus sed turpis tincidunt id aliquet risus feugiat. Tempor orci eu lobortis elementum nibh tellus molestie nunc non.\n\nEtiam erat velit scelerisque in dictum non consectetur. Tristique senectus et netus et malesuada fames ac turpis. Praesent semper feugiat nibh sed pulvinar proin.',
+      'Amet massa vitae tortor condimentum lacinia quis vel. Felis imperdiet proin fermentum leo vel orci. Nunc sed augue lacus viverra vitae congue eu.\n\nVolutpat blandit aliquam etiam erat velit scelerisque in dictum. Commodo odio aenean sed adipiscing diam donec adipiscing tristique.',
+      'Pretium lectus quam id leo in vitae turpis massa. Metus dictum at tempor commodo ullamcorper. Sit amet consectetur adipiscing elit pellentesque habitant.\n\nMorbi tristique senectus et netus et malesuada fames ac. Congue mauris rhoncus aenean vel elit scelerisque mauris.',
+    ];
+    await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
+    return responses[Math.floor(Math.random() * responses.length)];
+  }
+</script>
+</body>
+</html>
