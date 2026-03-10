@@ -1,5 +1,6 @@
 {
   "schemaVersion": "1.0.0",
   "displayName": "Swisscare ChatBar",
-  "devServerPort": 1337
+  "devServerPort": 1337,
+  "entryFile": "src/components/ChatBar.webflow.tsx"
 }
