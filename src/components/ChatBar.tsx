@@ -25,6 +25,34 @@ export interface ChatBarProps {
   onSendMessage?: (message: string, history: Message[]) => Promise<string>
 }
 
+export function formatText(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .split('\n\n')
+    .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+    .join('')
+}
+
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>')
+}
+
+const DEMO_RESPONSES = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  'Consectetur adipiscing elit duis tristique sollicitudin nibh sit amet.\n\nSed blandit libero volutpat sed cras ornare arcu.',
+  'Duis ultricies lacus sed turpis tincidunt id aliquet risus feugiat.\n\nEtiam erat velit scelerisque in dictum non consectetur.',
+]
+
+async function defaultSendMessage(_msg: string, _history: Message[]): Promise<string> {
+  await new Promise(r => setTimeout(r, 800 + Math.random() * 600))
+  return DEMO_RESPONSES[Math.floor(Math.random() * DEMO_RESPONSES.length)]
+}
+
 const DEFAULT_QUESTIONS = [
   'How much cost the insurance in Spain?',
   'Can you help with canton of St-Gallen?',
@@ -77,6 +105,68 @@ function PrivateBadge() {
   )
 }
 
+function MessageActions({ content }: { content: string }) {
+  const [thumbUp, setThumbUp] = React.useState(false)
+  const [thumbDown, setThumbDown] = React.useState(false)
+  const [copied, setCopied] = React.useState(false)
+  return (
+    <div className={styles.msgActions}>
+      <button className={styles.msgAct} onClick={() => setThumbUp(true)} style={thumbUp ? { color: 'rgba(255,255,255,0.9)' } : {}}>
+        <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
+      </button>
+      <button className={styles.msgAct} onClick={() => setThumbDown(true)} style={thumbDown ? { color: 'rgba(255,255,255,0.9)' } : {}}>
+        <svg viewBox="0 0 24 24"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/></svg>
+      </button>
+      <button
+        className={styles.msgAct}
+        onClick={() => { navigator.clipboard.writeText(content); setCopied(true) }}
+        style={copied ? { color: 'rgba(255,255,255,0.9)' } : {}}
+      >
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      </button>
+    </div>
+  )
+}
+
+function MessageRow({
+  message,
+  assistantName,
+  isStreaming,
+  accentColor,
+}: {
+  message: Message
+  assistantName: string
+  isStreaming: boolean
+  accentColor: string
+}) {
+  if (message.role === 'user') {
+    return (
+      <div className={`${styles.msgRow} ${styles.user}`}>
+        <div className={styles.msgLabel}>You</div>
+        <div
+          className={styles.rowContent}
+          dangerouslySetInnerHTML={{ __html: escapeHtml(message.content) }}
+          style={{ background: accentColor, color: '#111' } as React.CSSProperties}
+        />
+      </div>
+    )
+  }
+  return (
+    <div className={`${styles.msgRow} ${styles.ai}`}>
+      <div style={{ maxWidth: '80%', width: '100%' }}>
+        <div className={styles.msgLabel}>{assistantName}</div>
+        <div
+          className={styles.rowContent}
+          dangerouslySetInnerHTML={{ __html: formatText(message.content) }}
+        />
+        {!isStreaming && message.content && (
+          <MessageActions content={message.content} />
+        )}
+      </div>
+    </div>
+  )
+}
+
 export function ChatBar({
   assistantName = 'Swisscare Assistant',
   welcomeTitle = 'How can I help you today?',
@@ -92,13 +182,21 @@ export function ChatBar({
   privacyModeEnabled: _privacyModeEnabled = true,
   dataRetentionDays: _dataRetentionDays = 7,
   dataRetentionEnabled: _dataRetentionEnabled = true,
-  onSendMessage: _onSendMessage,
+  onSendMessage,
 }: ChatBarProps) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [firstSent, setFirstSent] = React.useState(false)
   const [inputValue, setInputValue] = React.useState('')
   const [isBusy, setIsBusy] = React.useState(false)
   const [privacyMode, setPrivacyMode] = React.useState(false)
+  const [messages, setMessages] = React.useState<Message[]>([])
+  const [streamingId, setStreamingId] = React.useState<string | null>(null)
+  const messagesEndRef = React.useRef<HTMLDivElement>(null)
+  const bottomInputRef = React.useRef<HTMLTextAreaElement>(null)
+
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   function handleToggle() {
     setIsOpen(prev => !prev)
@@ -111,8 +209,58 @@ export function ChatBar({
     }
   }
 
-  function handleSend() {
-    // Implemented in Task 7. The Send button is visible but non-functional at this stage — expected.
+  async function handleSend() {
+    const text = inputValue.trim()
+    if (!text || isBusy) return
+
+    if (!firstSent) {
+      setFirstSent(true)
+    }
+
+    const userMsg: Message = { id: crypto.randomUUID(), role: 'user', content: text }
+    const aiMsgId = crypto.randomUUID()
+    const aiMsg: Message = { id: aiMsgId, role: 'ai', content: '' }
+
+    setMessages(prev => [...prev, userMsg, aiMsg])
+    setInputValue('')
+    setIsBusy(true)
+    setStreamingId(aiMsgId)
+
+    try {
+      const sendFn = onSendMessage ?? defaultSendMessage
+      const reply = await sendFn(text, [...messages, userMsg])
+
+      // Word-by-word streaming
+      const words = reply.split(' ')
+      let i = 0
+      const interval = setInterval(() => {
+        if (i < words.length) {
+          const word = words[i++]
+          setMessages(prev =>
+            prev.map(m =>
+              m.id === aiMsgId
+                ? { ...m, content: m.content + (m.content ? ' ' : '') + word }
+                : m
+            )
+          )
+        } else {
+          clearInterval(interval)
+          setStreamingId(null)
+          setIsBusy(false)
+          setTimeout(() => bottomInputRef.current?.focus(), 50)
+        }
+      }, 38)
+    } catch {
+      setMessages(prev =>
+        prev.map(m =>
+          m.id === aiMsgId
+            ? { ...m, content: "Sorry, I'm having a connection issue. Please try again." }
+            : m
+        )
+      )
+      setStreamingId(null)
+      setIsBusy(false)
+    }
   }
 
   const topInputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -121,6 +269,9 @@ export function ChatBar({
       setTimeout(() => topInputRef.current?.focus(), 500)
     }
   }, [isOpen])
+
+  // Suppress unused variable warning — privacyMode setter used in Tasks 8-10
+  void setPrivacyMode
 
   return (
     <div
@@ -175,6 +326,49 @@ export function ChatBar({
               </div>
             )}
           </div>
+
+          {/* Messages */}
+          {firstSent && (
+            <div className={styles.chatMessages}>
+              {messages.map(msg => (
+                <MessageRow
+                  key={msg.id}
+                  message={msg}
+                  assistantName={assistantName}
+                  isStreaming={msg.id === streamingId}
+                  accentColor={accentColor}
+                />
+              ))}
+              {isBusy && streamingId && messages.find(m => m.id === streamingId)?.content === '' && (
+                <div className={styles.typingRow}>
+                  <span className={styles.thinkingShimmer}>Thinking…</span>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+
+          {/* Bottom input */}
+          {firstSent && (
+            <div className={styles.chatInputArea}>
+              <div className={`${styles.inputBox}${privacyMode ? ` ${styles.privateMode}` : ''}`}>
+                {privacyMode && <PrivateBadge />}
+                <textarea
+                  ref={bottomInputRef}
+                  placeholder={inputPlaceholder}
+                  value={inputValue}
+                  onChange={e => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  rows={1}
+                  disabled={isBusy}
+                />
+                <button className={styles.inputSend} onClick={handleSend} disabled={isBusy || !inputValue.trim()} aria-label="Send">
+                  <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+              </div>
+              <span className={styles.inputHint}>{inputHint}</span>
+            </div>
+          )}
         </div>
       </div>
 

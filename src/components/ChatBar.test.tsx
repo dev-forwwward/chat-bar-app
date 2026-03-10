@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { ChatBar } from './ChatBar'
+import { ChatBar, formatText, escapeHtml } from './ChatBar'
 
 describe('ChatBar', () => {
   it('renders without crashing', () => {
@@ -59,5 +59,26 @@ describe('ChatBar', () => {
     const barStrip = container.querySelector('[class*="barStrip"]')!
     fireEvent.click(barStrip)
     expect(screen.getByPlaceholderText('Type here…')).toBeInTheDocument()
+  })
+})
+
+describe('formatText', () => {
+  it('converts **bold** to <strong>', () => {
+    expect(formatText('**hello**')).toContain('<strong>hello</strong>')
+  })
+  it('converts *italic* to <em>', () => {
+    expect(formatText('*hello*')).toContain('<em>hello</em>')
+  })
+  it('wraps paragraphs in <p> tags', () => {
+    expect(formatText('a\n\nb')).toBe('<p>a</p><p>b</p>')
+  })
+})
+
+describe('escapeHtml', () => {
+  it('escapes < and >', () => {
+    expect(escapeHtml('<div>')).toBe('&lt;div&gt;')
+  })
+  it('escapes &', () => {
+    expect(escapeHtml('a & b')).toBe('a &amp; b')
   })
 })
