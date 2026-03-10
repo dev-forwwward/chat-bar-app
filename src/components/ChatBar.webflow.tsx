@@ -1,4 +1,3 @@
-import React from 'react'
 import { declareComponent } from '@webflow/react'
 import { props } from '@webflow/data-types'
 import { ChatBar } from './ChatBar'

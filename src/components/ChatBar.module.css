@@ -71,7 +71,7 @@
   height: 60px;
   min-height: 60px;
   flex-shrink: 0;
-  background: #0e0e0e;
+  background: var(--bar-bg, #0e0e0e);
   display: flex; align-items: center;
   padding: 0 20px;
   cursor: pointer; user-select: none;

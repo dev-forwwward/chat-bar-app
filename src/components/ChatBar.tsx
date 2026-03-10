@@ -73,6 +73,7 @@ function RotatingQuestions({ questions }: { questions: string[] }) {
   const [activeIndex, setActiveIndex] = React.useState(0)
 
   React.useEffect(() => {
+    if (questions.length === 0) return
     const interval = setInterval(() => {
       setActiveIndex(i => (i + 1) % questions.length)
     }, 3200)
@@ -119,7 +120,7 @@ function MessageActions({ content }: { content: string }) {
       </button>
       <button
         className={styles.msgAct}
-        onClick={() => { navigator.clipboard.writeText(content); setCopied(true) }}
+        onClick={() => { navigator.clipboard.writeText(content).catch(() => {}); setCopied(true) }}
         style={copied ? { color: 'rgba(255,255,255,0.9)' } : {}}
       >
         <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -193,8 +194,16 @@ export function ChatBar({
   const [streamingId, setStreamingId] = React.useState<string | null>(null)
   const [retentionOpen, setRetentionOpen] = React.useState(false)
   const [dataDeleted, setDataDeleted] = React.useState(false)
+  const topInputRef = React.useRef<HTMLTextAreaElement>(null)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const bottomInputRef = React.useRef<HTMLTextAreaElement>(null)
+  const streamIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
+
+  React.useEffect(() => {
+    return () => {
+      if (streamIntervalRef.current !== null) clearInterval(streamIntervalRef.current)
+    }
+  }, [])
 
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -235,7 +244,7 @@ export function ChatBar({
       // Word-by-word streaming
       const words = reply.split(' ')
       let i = 0
-      const interval = setInterval(() => {
+      streamIntervalRef.current = setInterval(() => {
         if (i < words.length) {
           const word = words[i++]
           setMessages(prev =>
@@ -246,7 +255,8 @@ export function ChatBar({
             )
           )
         } else {
-          clearInterval(interval)
+          if (streamIntervalRef.current !== null) clearInterval(streamIntervalRef.current)
+          streamIntervalRef.current = null
           setStreamingId(null)
           setIsBusy(false)
           setTimeout(() => bottomInputRef.current?.focus(), 50)
@@ -265,7 +275,6 @@ export function ChatBar({
     }
   }
 
-  const topInputRef = React.useRef<HTMLTextAreaElement>(null)
   React.useEffect(() => {
     if (isOpen) {
       setTimeout(() => topInputRef.current?.focus(), 500)
