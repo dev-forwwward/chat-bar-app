@@ -270,8 +270,17 @@ export function ChatBar({
     }
   }, [isOpen])
 
-  // Suppress unused variable warning — privacyMode setter used in Tasks 8-10
-  void setPrivacyMode
+  function clearChat() {
+    // Resets conversation state only.
+    // privacyMode and retentionOpen are intentionally preserved —
+    // they are user preferences for the session, not per-conversation state.
+    setMessages([])
+    setFirstSent(false)
+    setInputValue('')
+    setIsBusy(false)
+    setStreamingId(null)
+    setTimeout(() => topInputRef.current?.focus(), 100)
+  }
 
   return (
     <div
@@ -409,7 +418,10 @@ export function ChatBar({
             <div className={styles.barOpenName}>{assistantName}</div>
           </div>
           <div className={styles.barOpenSettings}>
-            {/* Settings controls added in Tasks 8–10 */}
+            <button className={styles.chBtn} onClick={e => { e.stopPropagation(); clearChat() }}>
+              New chat
+            </button>
+            <div className={styles.chDivider} />
           </div>
         </div>
       </div>

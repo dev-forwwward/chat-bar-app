@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { ChatBar, formatText, escapeHtml } from './ChatBar'
 
 describe('ChatBar', () => {
@@ -59,6 +60,22 @@ describe('ChatBar', () => {
     const barStrip = container.querySelector('[class*="barStrip"]')!
     fireEvent.click(barStrip)
     expect(screen.getByPlaceholderText('Type here…')).toBeInTheDocument()
+  })
+
+  it('clears chat when New Chat is clicked', async () => {
+    const { container } = render(<ChatBar onSendMessage={async () => 'reply'} />)
+    // Open
+    fireEvent.click(container.querySelector('[class*="barStrip"]')!)
+    // Send a message
+    const textarea = screen.getByPlaceholderText('Ask Swisscare Assistant…')
+    await userEvent.type(textarea, 'Hello')
+    fireEvent.click(screen.getByLabelText('Send'))
+    // Wait for firstSent state
+    await screen.findByText('Hello')
+    // Click New Chat
+    fireEvent.click(screen.getByText('New chat'))
+    // Welcome screen should be visible again (welcomeTitle text)
+    expect(screen.getByText('How can I help you today?')).toBeInTheDocument()
   })
 })
 
