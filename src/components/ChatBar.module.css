@@ -6,51 +6,13 @@
   font-display: swap;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { font-family: Atypbldisplay, Georgia, sans-serif; }
-body { overflow-x: hidden; padding-bottom: var(--bar-h); font-family: Atypbldisplay, Georgia, sans-serif; }
-
-/* ══════════════════════════════════════
-   TOP NAV BAR (clean transparent)
-══════════════════════════════════════ */
-.topbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-  background: rgba(205, 217, 238, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 44px;
+.aiBar *,
+.aiBar *::before,
+.aiBar *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-.topbarLogo {
-  font-size: 24px; font-weight: 500; letter-spacing: 0.5px;
-  color: var(--dark); white-space: nowrap; text-transform: uppercase;
-  font-family: Atypbldisplay, Georgia, sans-serif;
-}
-.topbarRight { display: flex; align-items: center; gap: 10px; }
-.topbarUser {
-  background: transparent; border: none;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--dark); padding: 4px;
-}
-.topbarUser svg { width: 20px; height: 20px; fill: currentColor; }
-.topbarMenu {
-  background: transparent; color: var(--dark);
-  border: none; padding: 4px;
-  cursor: pointer;
-  display: flex; align-items: center;
-}
-.topbarMenu .ham { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
-.topbarMenu .ham span {
-  display: block; height: 2px; background: var(--dark); border-radius: 2px;
-  transition: width .3s ease, opacity .3s ease, transform .3s ease;
-}
-.topbarMenu .ham span:nth-child(1) { width: 22px; }
-.topbarMenu .ham span:nth-child(2) { width: 14px; }
-.topbarMenu .ham span:nth-child(3) { width: 18px; }
-.topbarMenu:hover .ham span:nth-child(1) { width: 18px; }
-.topbarMenu:hover .ham span:nth-child(2) { width: 22px; }
-.topbarMenu:hover .ham span:nth-child(3) { width: 14px; }
 
 
 /* ══════════════════════════════════════
@@ -690,15 +652,15 @@ body { overflow-x: hidden; padding-bottom: var(--bar-h); font-family: Atypbldisp
   background: linear-gradient(135deg, #f8ef78, #e8d800);
   display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
 }
-.welcomeTitle { color: var(--text-primary); font-size: 2.22rem; font-weight: 300; text-align: center; line-height: 1.2; letter-spacing: -0.5px; font-family: Atypbldisplay, Georgia, sans-serif !important; }
+.welcomeTitle { color: var(--text-primary, #ececec); font-size: 2.22rem; font-weight: 300; text-align: center; line-height: 1.2; letter-spacing: -0.5px; font-family: Atypbldisplay, Georgia, sans-serif !important; }
 .welcomeSub { color: rgba(255,255,255,0.38); font-size: 0.95rem; text-align: center; max-width: 420px; line-height: 1.5; margin-top: 10px; font-weight: 300; font-family: Atypbldisplay, Georgia, sans-serif !important; }
 .welcomeChips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 480px; }
 .chip {
-  background: #2a2a2a; border: 1px solid var(--border); color: var(--text-secondary);
+  background: #2a2a2a; border: 1px solid var(--border, #383838); color: var(--text-secondary, #8e8ea0);
   border-radius: 10px; padding: 8px 14px; font-family: Atypbldisplay, Georgia, sans-serif;
   font-size: 0.8rem; cursor: pointer; transition: all .2s; text-align: left; line-height: 1.35;
 }
-.chip:hover { background: #333; border-color: #4a4a4a; color: var(--text-primary); }
+.chip:hover { background: #333; border-color: #4a4a4a; color: var(--text-primary, #ececec); }
 
 /* ── Bottom input area — centered like Claude/GPT ── */
 .chatInputArea {
@@ -708,7 +670,7 @@ body { overflow-x: hidden; padding-bottom: var(--bar-h); font-family: Atypbldisp
 }
 .inputBox {
   width: 100%; max-width: 700px;
-  background: var(--input-bg); border: 1px solid var(--border);
+  background: var(--input-bg, #2f2f2f); border: 1px solid var(--border, #383838);
   border-radius: 16px; padding: 12px 14px 12px 18px;
   display: flex; align-items: flex-end; gap: 10px;
   transition: border-color .3s ease;
@@ -740,7 +702,7 @@ body { overflow-x: hidden; padding-bottom: var(--bar-h); font-family: Atypbldisp
 .inputBox:focus-within { border-color: #4a4a4a; }
 .inputBox textarea {
   flex: 1; background: transparent; border: none; outline: none;
-  color: var(--text-primary); font-family: 'Inter', sans-serif;
+  color: var(--text-primary, #ececec); font-family: 'Inter', sans-serif;
   font-size: 0.92rem; line-height: 1.5; resize: none;
   min-height: 68px; max-height: 200px; scrollbar-width: none;
 }
@@ -748,7 +710,7 @@ body { overflow-x: hidden; padding-bottom: var(--bar-h); font-family: Atypbldisp
 .inputBox textarea::placeholder { color: #555; }
 .inputSend {
   width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
-  background: var(--accent); border: none; cursor: pointer;
+  background: var(--accent, #f8ef78); border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: opacity .2s, transform .15s;
 }
