@@ -87,6 +87,13 @@ export function ChatBar({
     setIsOpen(prev => !prev)
   }
 
+  const topInputRef = React.useRef<HTMLTextAreaElement>(null)
+  React.useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => topInputRef.current?.focus(), 500)
+    }
+  }, [isOpen])
+
   return (
     <div
       id="ai-bar"
@@ -97,6 +104,29 @@ export function ChatBar({
         '--chat-bg': chatBackground,
       } as React.CSSProperties}
     >
+      {/* Top bar — visible only when open */}
+      <div className={styles.aiTopbar}>
+        <div className={styles.aiTopbarLogo}>{assistantName}</div>
+        <button
+          className={styles.chClose}
+          data-testid="close-btn"
+          title="Close"
+          onClick={e => { e.stopPropagation(); setIsOpen(false) }}
+          aria-label="Close chat"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Chat panel */}
+      <div className={styles.chatPanel}>
+        <div className={styles.chatInner}>
+          {/* Welcome state + messages + input added in Tasks 6–7 */}
+        </div>
+      </div>
+
       {/* Bottom bar — always visible */}
       <div
         className={`${styles.barStrip} ${styles.auroraOn}`}
