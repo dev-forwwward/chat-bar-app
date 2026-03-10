@@ -179,9 +179,9 @@ export function ChatBar({
   accentColor = '#f8ef78',
   barBackground = '#0e0e0e',
   chatBackground = '#212121',
-  privacyModeEnabled: _privacyModeEnabled = true,
-  dataRetentionDays: _dataRetentionDays = 7,
-  dataRetentionEnabled: _dataRetentionEnabled = true,
+  privacyModeEnabled = true,
+  dataRetentionDays = 7,
+  dataRetentionEnabled = true,
   onSendMessage,
 }: ChatBarProps) {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -422,6 +422,20 @@ export function ChatBar({
               New chat
             </button>
             <div className={styles.chDivider} />
+            {privacyModeEnabled && (
+              <button
+                className={`${styles.chIconBtn} ${styles.chEyeBtn}${privacyMode ? ` ${styles.active}` : ''}`}
+                data-testid="eye-btn"
+                onClick={e => { e.stopPropagation(); setPrivacyMode(p => !p) }}
+                aria-label="Toggle private mode"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                  {privacyMode && <line x1="3" y1="3" x2="21" y2="21"/>}
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>

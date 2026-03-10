@@ -62,6 +62,15 @@ describe('ChatBar', () => {
     expect(screen.getByPlaceholderText('Type here…')).toBeInTheDocument()
   })
 
+  it('toggles private mode on eye button click', () => {
+    const { container } = render(<ChatBar privacyModeEnabled={true} />)
+    fireEvent.click(container.querySelector('[class*="barStrip"]')!)
+    const eyeBtn = container.querySelector('[data-testid="eye-btn"]')!
+    expect(eyeBtn.className).not.toContain('active')
+    fireEvent.click(eyeBtn)
+    expect(eyeBtn.className).toContain('active')
+  })
+
   it('clears chat when New Chat is clicked', async () => {
     const { container } = render(<ChatBar onSendMessage={async () => 'reply'} />)
     // Open
