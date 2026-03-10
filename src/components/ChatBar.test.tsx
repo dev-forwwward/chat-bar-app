@@ -62,6 +62,18 @@ describe('ChatBar', () => {
     expect(screen.getByPlaceholderText('Type here…')).toBeInTheDocument()
   })
 
+  it('shows retention badge when dataRetentionEnabled is true', () => {
+    const { container } = render(<ChatBar dataRetentionEnabled={true} dataRetentionDays={7} />)
+    fireEvent.click(container.querySelector('[class*="barStrip"]')!)
+    expect(screen.getByText('7 days')).toBeInTheDocument()
+  })
+
+  it('hides retention badge when dataRetentionEnabled is false', () => {
+    const { container } = render(<ChatBar dataRetentionEnabled={false} />)
+    fireEvent.click(container.querySelector('[class*="barStrip"]')!)
+    expect(screen.queryByText(/days/)).not.toBeInTheDocument()
+  })
+
   it('toggles private mode on eye button click', () => {
     const { container } = render(<ChatBar privacyModeEnabled={true} />)
     fireEvent.click(container.querySelector('[class*="barStrip"]')!)

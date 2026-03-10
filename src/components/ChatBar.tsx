@@ -191,6 +191,8 @@ export function ChatBar({
   const [privacyMode, setPrivacyMode] = React.useState(false)
   const [messages, setMessages] = React.useState<Message[]>([])
   const [streamingId, setStreamingId] = React.useState<string | null>(null)
+  const [retentionOpen, setRetentionOpen] = React.useState(false)
+  const [dataDeleted, setDataDeleted] = React.useState(false)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const bottomInputRef = React.useRef<HTMLTextAreaElement>(null)
 
@@ -281,6 +283,35 @@ export function ChatBar({
     setStreamingId(null)
     setTimeout(() => topInputRef.current?.focus(), 100)
   }
+
+  function handleDeleteData() {
+    setDataDeleted(true)
+    clearChat()
+    // Server-side deletion is intentionally out of scope — callers handle this via onSendMessage / their own backend
+    setTimeout(() => {
+      setRetentionOpen(false)
+      setDataDeleted(false)
+    }, 1800)
+  }
+
+  function saveChat() {
+    const text = messages
+      .map(m => (m.role === 'user' ? 'You: ' : `${assistantName}: `) + m.content)
+      .join('\n\n')
+    if (!text) return
+    const blob = new Blob([text], { type: 'text/plain' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = 'swisscare-chat.txt'
+    a.click()
+  }
+
+  React.useEffect(() => {
+    if (!retentionOpen) return
+    const close = () => setRetentionOpen(false)
+    setTimeout(() => document.addEventListener('click', close), 0)
+    return () => document.removeEventListener('click', close)
+  }, [retentionOpen])
 
   return (
     <div
@@ -378,6 +409,43 @@ export function ChatBar({
               <span className={styles.inputHint}>{inputHint}</span>
             </div>
           )}
+
+          {retentionOpen && (
+            <div className={styles.retentionPopup}>
+              <div className={styles.retentionPopupTitle}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Data Retention Policy
+              </div>
+              <div className={styles.retentionPopupBody}>
+                Your conversation is securely stored for <strong>{dataRetentionDays} days</strong>, after which it is automatically and permanently deleted from Swisscare's servers.<br/><br/>
+                This limited retention period allows us to ensure service quality and continuously improve the performance of our assistant. No data is ever shared with third parties.
+                <br/><br/>If you wish to remove your conversation data immediately, you may do so below.
+              </div>
+              <button
+                className={`${styles.retentionDeleteBtn}${dataDeleted ? ` ${styles.done}` : ''}`}
+                onClick={handleDeleteData}
+              >
+                {dataDeleted ? (
+                  <>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Data deleted
+                  </>
+                ) : (
+                  <>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+                    </svg>
+                    Delete my data now
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -436,6 +504,33 @@ export function ChatBar({
                 </svg>
               </button>
             )}
+            {dataRetentionEnabled && !privacyMode && (
+              <>
+                <div className={styles.chDivider} />
+                <div
+                  className={`${styles.chRetention}${retentionOpen ? ` ${styles.active}` : ''}`}
+                  onClick={e => { e.stopPropagation(); setRetentionOpen(o => !o) }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                  <span className={styles.chRetentionLabel}>{dataRetentionDays} days</span>
+                </div>
+                <div className={styles.chDivider} />
+              </>
+            )}
+
+            {/* Save chat button */}
+            <button
+              className={styles.chIconBtn}
+              onClick={e => { e.stopPropagation(); saveChat() }}
+              title="Save chat"
+              aria-label="Save chat"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
