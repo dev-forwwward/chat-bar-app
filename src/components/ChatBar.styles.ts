@@ -20,13 +20,14 @@ export const chatBarStyles = `
 .aiBar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  z-index: 600;
+  z-index: 9999;
   height: 60px;
   display: flex;
   flex-direction: column;
   transition: height .5s cubic-bezier(.4,0,.2,1);
   overflow: hidden;
   background: var(--chat-bg, #212121);
+  z-index: 9999;
 }
 .aiBar.open { height: 100vh; }
 
