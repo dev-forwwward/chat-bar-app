@@ -2,5 +2,20 @@
   "schemaVersion": "1.0.0",
   "displayName": "Swisscare ChatBar",
   "devServerPort": 1337,
-  "entryFile": "src/components/ChatBar.webflow.tsx"
+  "entryFile": "src/components/ChatBar.webflow.tsx",
+  "telemetry": {
+    "global": {
+      "allowTelemetry": true,
+      "lastPrompted": 1773241497635,
+      "version": "1.12.4"
+    }
+  },
+  "library": {
+    "components": [
+      "**/*.webflow.@(js|jsx|mjs|ts|tsx)"
+    ],
+    "name": "Swisscare code components",
+    "description": "code components",
+    "id": "swisscare-code-components"
+  }
 }
