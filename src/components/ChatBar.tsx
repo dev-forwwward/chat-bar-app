@@ -1,5 +1,12 @@
 import React from 'react'
-import styles from './ChatBar.module.css'
+import { chatBarStyles } from './ChatBar.styles'
+
+// Maps any property access to the key itself (e.g. styles.aiBar → 'aiBar').
+// This lets the Webflow CLI (webpack, no CSS Modules) and Vite both work
+// without changing any className expressions in JSX.
+const styles = new Proxy({} as Record<string, string>, {
+  get: (_, key: string) => key,
+})
 
 export interface Message {
   id: string
@@ -332,6 +339,7 @@ export function ChatBar({
         '--chat-bg': chatBackground,
       } as React.CSSProperties}
     >
+      <style>{chatBarStyles}</style>
       {/* Top bar — visible only when open */}
       <div className={styles.aiTopbar}>
         <div className={styles.aiTopbarLogo}>{assistantName}</div>
