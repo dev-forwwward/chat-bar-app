@@ -5,7 +5,7 @@
 Webflow Code Components are React components that run inside Webflow's Designer and published sites.
 They are developed locally, published to a Webflow Workspace library, then installed into individual sites.
 
-Flow: Local dev → webflow publish → Workspace library → Install into site → Drag onto canvas
+Flow: Local dev → `webflow library share` → Workspace library → Install into site → Drag onto canvas
 
 ---
 
@@ -13,112 +13,123 @@ Flow: Local dev → webflow publish → Workspace library → Install into site 
 
 - Node.js 18+
 - A Webflow account with a Workspace
-- Webflow CLI installed globally (or use npx)
 
 ---
 
 ## 2. Local Setup
 
 ```bash
-# Clone / navigate to project
-cd webflow-app
-
 # Install dependencies
 npm install
 
-# Option A: Vite dev server (plain browser preview)
+# Vite dev server — plain browser preview (no Webflow Designer)
 npm run dev
 # Open http://localhost:5173
-
-# Option B: Webflow CLI dev server (connects to Designer)
-npx webflow dev
-# Follow prompts to authenticate and connect to your Workspace
 ```
 
 ---
 
-## 3. Authenticate with Webflow
+## 3. Publish to Workspace
+
+When you're ready to share the component with your Webflow Workspace:
 
 ```bash
-npx webflow login
+npx webflow library share
 ```
 
-Opens a browser window. Sign in with your Webflow account. Your token is stored locally.
+This command will:
+1. Open a browser window and ask you to authenticate with Webflow (one-time)
+2. Ask for a library name and description
+3. Ask whether your code is trusted and secure
+4. Compile the component and upload it to your Workspace
+
+No separate login step is needed — authentication is handled automatically.
 
 ---
 
-## 4. Run Webflow Dev Server
+## 4. Install into a Site
+
+1. Open your Webflow site in the Designer
+2. Go to **Apps** panel (left sidebar) → **Libraries**
+3. Find the library you just published (e.g. "Swisscare code components")
+4. Click **Install**
+5. The component appears in the **Add Elements** panel under "Components"
+
+---
+
+## 5. Insert and Configure
+
+1. Drag **Swisscare Chat Bar** onto any page
+2. It renders as a fixed bottom bar (`position: fixed; bottom: 0`)
+3. Select the component → edit props in the right panel:
+
+| Prop | Default | Description |
+|---|---|---|
+| Assistant Name | Swisscare Assistant | Shown in bar and chat header |
+| Welcome Title | How can I help you today? | Heading before first message |
+| Welcome Subtitle | (long text) | Subtext before first message |
+| Input Placeholder | Ask Swisscare Assistant… | Textarea placeholder |
+| Input Hint | Official insurance documents always prevail. | Small text below input |
+| Sample Questions | (3 defaults) | Comma-separated, rotates in closed bar |
+| Accent Color | #f8ef78 | Button and highlight color |
+| Bar Background Color | #0e0e0e | Color of the closed bottom bar |
+| Chat Background Color | #212121 | Color of the open chat panel |
+| Data Retention Days | 7 | Number shown in retention badge |
+| Show Privacy Mode Button | true | Toggles the eye icon |
+| Show Data Retention Badge | true | Toggles the shield/days badge |
+| Powered By Text | (empty) | Optional branding text |
+| Powered By URL | (empty) | Optional branding link |
+
+---
+
+## 6. Live Dev Server (Designer connection)
+
+To preview code changes live inside the Webflow Designer without republishing:
 
 ```bash
-npx webflow dev
+npx webflow devlink
 ```
 
-This starts a local dev server on port 1337 (set in `webflow.json`).
-Open your Webflow site in the Designer → Apps panel → connect to localhost:1337.
-The ChatBar component will appear in your component list.
+Requires `WEBFLOW_SITE_ID` and `WEBFLOW_SITE_API_TOKEN` in a `.env` file (or pass as `--site` and `--api-token` flags):
 
-**Hot reload:** Changes to `ChatBar.tsx` or `ChatBar.module.css` are reflected immediately in the Designer.
-
----
-
-## 5. Edit Props in the Designer
-
-When the component is selected on the canvas:
-- Open the right panel → "Component Properties"
-- All props defined in `ChatBar.webflow.tsx` appear here
-- Edit Assistant Name, Welcome Title, colors, etc.
-- Changes preview instantly in the canvas
-
----
-
-## 6. Publish to Workspace
-
-When you're happy with the component:
-
-```bash
-npx webflow publish
+```
+WEBFLOW_SITE_ID=your-site-id
+WEBFLOW_SITE_API_TOKEN=wf_your-token
 ```
 
-This builds and uploads the component library to your Webflow Workspace.
-It will be available to all sites in your Workspace.
+**Where to find these:**
+- **Site ID**: Webflow Designer → Site Settings → General → Site Details
+- **API Token**: Webflow Designer → Site Settings → Apps & Integrations → API Access → Generate API Token (needs Custom Code scope)
+
+Once running, connect in the Designer under **Apps → devlink → localhost:1337**.
+Hot reload: changes to `ChatBar.tsx` or `ChatBar.styles.ts` are reflected immediately.
 
 ---
 
-## 7. Install into a Site
-
-1. In Webflow Designer, open the site you want to use the component in
-2. Go to Apps panel (left sidebar)
-3. Find "Swisscare ChatBar" in your Workspace components
-4. Click Install
-5. The component appears in your Add Elements panel under "Components"
-
----
-
-## 8. Insert and Configure
-
-1. Drag "Swisscare Chat Bar" onto any page
-2. It renders as a fixed bottom bar (position: fixed, bottom: 0)
-3. Select it → edit props in the right panel:
-   - **Assistant Name** — displayed in bar and chat header
-   - **Welcome Title / Subtitle** — shown before first message
-   - **Accent Color** — yellow by default (#f8ef78)
-   - **Sample Questions** — comma-separated list
-   - etc.
-
----
-
-## 9. Wire a Real AI Backend (Custom Code)
+## 7. Wire a Real AI Backend (Custom Code)
 
 The component's `onSendMessage` prop is code-level only — it cannot be set in the Webflow Designer.
-The component defaults to demo (lorem ipsum) mode when `onSendMessage` is not provided.
+When not provided the component runs in demo mode (lorem ipsum responses).
 
-To connect a real AI backend, the site must use a wrapper component or embed script that passes the prop programmatically. The recommended approach is to create a thin Webflow page embed that renders `<ChatBar onSendMessage={...} />` directly, or to use a server-side integration where the AI response is proxied through your own API and wired at the application level — outside the Webflow Designer.
+To connect a real AI backend, pass the prop via Webflow's **Before `</body>` tag** custom code:
 
-This is intentionally out of scope for the component itself. The component's job is UI only.
+```html
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Your framework/embed will expose the ChatBar instance here
+    // and you can pass onSendMessage as a prop
+  })
+</script>
+```
+
+The component's `onSendMessage` signature:
+```ts
+(message: string, history: Message[]) => Promise<string>
+```
 
 ---
 
-## 10. Update / Version the Component
+## 8. Update / Version the Component
 
 After making changes locally:
 
@@ -126,21 +137,22 @@ After making changes locally:
 # Bump version in package.json
 npm version patch  # or minor, major
 
-# Publish updated version
-npx webflow publish
+# Re-publish
+npx webflow library share
 ```
 
-Webflow will show a "Update available" banner in sites that have the component installed.
+Webflow will show an **Update available** banner in sites that have the component installed.
 Site owners can choose when to update.
 
 ---
 
-## 11. Common Issues
+## 9. Common Issues
 
 | Issue | Solution |
 |---|---|
-| `webflow dev` can't connect | Check port 1337 is free: `lsof -i :1337` |
+| `webflow library share` fails to compile | Run `npm run build` locally first to see TypeScript errors |
 | Props not showing in Designer | Verify `ChatBar.webflow.tsx` exports `declareComponent` at module level |
-| Styles leaking into page | CSS Modules scope styles automatically — check for any global CSS you added |
-| Component not found after publish | Wait 30s and refresh Designer; check Webflow Workspace → Apps |
-| `onSendMessage` not called | Verify the prop is passed via page custom code (see step 9) |
+| Styles not applying in Designer | Styles are injected via `<style>` tag — check `ChatBar.styles.ts` for the rule |
+| Component not found after publish | Wait 30s and refresh Designer; check Webflow Workspace → Apps → Libraries |
+| `devlink` says missing env vars | Add `WEBFLOW_SITE_ID` and `WEBFLOW_SITE_API_TOKEN` to `.env` (see step 6) |
+| `onSendMessage` not called | Verify the prop is passed via page custom code (see step 7) |
