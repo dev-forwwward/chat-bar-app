@@ -28,6 +28,7 @@
   transition: height .5s cubic-bezier(.4,0,.2,1);
   overflow: hidden;
   background: var(--chat-bg, #212121);
+  z-index: 9998;
 }
 .aiBar.open { height: 100vh; }
 
