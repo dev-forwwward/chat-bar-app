@@ -3,7 +3,10 @@
   "version": "1.0.1",
   "private": true,
   "scripts": {
+    "sync-styles": "node scripts/sync-styles.mjs",
+    "predev": "node scripts/sync-styles.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/sync-styles.mjs",
     "build": "tsc && vite build",
     "test": "vitest",
     "test:ui": "vitest --ui"

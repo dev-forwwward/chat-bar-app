@@ -1,6 +1,4 @@
-// AUTO-GENERATED — do not edit directly.
-// Edit src/components/ChatBar.css, then run: npm run sync-styles
-export const chatBarStyles = `
+
 @font-face {
   font-family: Atypbldisplay;
   src: url("https://cdn.prod.website-files.com/6850235ccb1257ecee2e0e0d/68502eb327be5eb748e80466_AtypBLDisplay-Medium.woff2") format("woff2");
@@ -689,4 +687,3 @@ export const chatBarStyles = `
   color: rgba(255,255,255,0.2);
   margin: 0 2px;
 }
-`
