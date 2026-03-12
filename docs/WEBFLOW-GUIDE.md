@@ -129,7 +129,25 @@ The component's `onSendMessage` signature:
 
 ---
 
-## 8. Update / Version the Component
+## 8. Editing Styles (CSS Workflow)
+
+All styles live in `src/components/ChatBar.css` — edit that file directly in your editor.
+`ChatBar.styles.ts` is auto-generated and should never be edited by hand.
+
+| What you do | What happens |
+|---|---|
+| Edit `ChatBar.css` during `npm run dev` | Vite detects the save → auto-syncs → browser reloads |
+| Run `npm run dev` or `npm run build` | `predev`/`prebuild` hook syncs automatically |
+| Before `npx webflow library share` | Run `npm run sync-styles` once manually first |
+
+```bash
+npm run sync-styles
+npx webflow library share
+```
+
+---
+
+## 9. Update / Version the Component
 
 After making changes locally:
 
