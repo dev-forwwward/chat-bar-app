@@ -80,9 +80,6 @@ export const chatBarStyles = `@font-face {
     opacity: 0;
     pointer-events: none;
     transition: opacity .3s ease .2s;
-    position: sticky;
-    top: 0;
-    z-index: 10;
   }
 }
 
@@ -96,7 +93,6 @@ export const chatBarStyles = `@font-face {
 .mobileMenuWrap {
   position: relative;
 }
-
 
 .mobileMenuBtn {
   width: 32px;
@@ -214,16 +210,10 @@ export const chatBarStyles = `@font-face {
   padding: 0 20px;
   user-select: none;
   position: relative;
-  transition: height .3s ease, min-height .3s ease;
 }
 
 .aiBar.open .barStrip {
   cursor: default;
-
-  @media (max-width: 767px) {
-    height: 0;
-    min-height: 0;
-  }
 }
 
 .auroraBlob {
@@ -1090,14 +1080,6 @@ export const chatBarStyles = `@font-face {
   justify-content: flex-start;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-
-  @media (max-width: 767px) {
-    flex: unset;
-    justify-content: unset;
-    padding: unset;
-    border-bottom: none;
-    display: none;
-  }
 }
 
 .welcomeInputInner {
@@ -1106,10 +1088,6 @@ export const chatBarStyles = `@font-face {
   align-items: center;
   width: 100%;
   max-width: 34.0625rem;
-
-  @media (max-width: 767px) {
-    display: none;
-  }
   margin-top: 1.5rem;
 }
 
@@ -1130,19 +1108,6 @@ export const chatBarStyles = `@font-face {
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-}
-
-.welcomeTextGroup {
-  display: contents;
-
-  @media (max-width: 767px) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    flex: 1;
-    justify-content: center;
-  }
 }
 
 .welcomeTitle {
@@ -1198,14 +1163,6 @@ export const chatBarStyles = `@font-face {
   color: var(--text-primary);
 }
 
-.chatInputArea.chatInputHidden {
-  display: none;
-
-  @media (max-width: 767px) {
-    display: flex;
-  }
-}
-
 .chatInputArea {
   flex-shrink: 0;
   padding: 12px 20px 14px;
@@ -1214,13 +1171,6 @@ export const chatBarStyles = `@font-face {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-
-  @media (max-width: 767px) {
-    position: sticky;
-    bottom: 0;
-    padding: 10px 12px 18px;
-    background: transparent;
-  }
 }
 
 .inputBox {
@@ -1236,14 +1186,6 @@ export const chatBarStyles = `@font-face {
   gap: 10px;
   transition: border-color .3s ease;
   position: relative;
-
-  @media (max-width: 767px) {
-    border-radius: 100px;
-    flex-direction: row;
-    align-items: center;
-    padding: 6px 6px 6px 20px;
-    gap: 0;
-  }
 }
 
 .inputBox.privateMode {
@@ -1291,10 +1233,6 @@ export const chatBarStyles = `@font-face {
   width: 100%;
   background: transparent;
   border: none;
-
-  @media (max-width: 767px) {
-    max-height: 44px;
-  }
   outline: none;
   color: var(--text-primary);
   font-family: 'Inter', sans-serif;
@@ -1319,11 +1257,6 @@ export const chatBarStyles = `@font-face {
   height: 2rem;
   border-radius: 2.5rem;
   flex-shrink: 0;
-
-  @media (max-width: 767px) {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
   background: var(--accent, var(--Maize));
   border: none;
   cursor: pointer;

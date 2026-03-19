@@ -342,7 +342,7 @@ export function ChatBar({
       <style>{chatBarStyles}</style>
       {/* Top bar — visible only when open */}
       <div className={styles.aiTopbar}>
-        <div className={styles.aiTopbarLogo}> {/*{assistantName}*/} </div>
+        <div className={styles.aiTopbarLogo}>{assistantName}</div>
         <button
           className={styles.chClose}
           data-testid="close-btn"
@@ -492,27 +492,29 @@ export function ChatBar({
                 This limited retention period allows us to ensure service quality and continuously improve the performance of our assistant. No data is ever shared with third parties.
                 <br/><br/>If you wish to remove your conversation data immediately, you may do so below.
               </div>
-              <button
-                className={`${styles.retentionDeleteBtn}${dataDeleted ? ` ${styles.done}` : ''}`}
-                onClick={handleDeleteData}
-              >
-                {dataDeleted ? (
-                  <>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Data deleted
-                  </>
-                ) : (
-                  <>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6"/>
-                      <path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
-                    </svg>
-                    Delete my data now
-                  </>
-                )}
-              </button>
+              <div className={styles.retentionActions}>
+                <button
+                  className={styles.retentionOkBtn}
+                  onClick={e => { e.stopPropagation(); setRetentionOpen(false) }}
+                >
+                  OK
+                </button>
+                <button
+                  className={`${styles.retentionDeleteBtn}${dataDeleted ? ` ${styles.done}` : ''}`}
+                  onClick={handleDeleteData}
+                >
+                  {dataDeleted ? (
+                    <>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      Data deleted
+                    </>
+                  ) : (
+                    'Delete data'
+                  )}
+                </button>
+              </div>
             </div>
           )}
         </div>
