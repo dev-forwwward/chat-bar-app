@@ -193,6 +193,7 @@ export function ChatBar({
   const [streamingId, setStreamingId] = React.useState<string | null>(null)
   const [retentionOpen, setRetentionOpen] = React.useState(false)
   const [dataDeleted, setDataDeleted] = React.useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
   const topInputRef = React.useRef<HTMLTextAreaElement>(null)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const bottomInputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -321,6 +322,13 @@ export function ChatBar({
     return () => document.removeEventListener('click', close)
   }, [retentionOpen])
 
+  React.useEffect(() => {
+    if (!mobileMenuOpen) return
+    const close = () => setMobileMenuOpen(false)
+    setTimeout(() => document.addEventListener('click', close), 0)
+    return () => document.removeEventListener('click', close)
+  }, [mobileMenuOpen])
+
   return (
     <div
       id="ai-bar"
@@ -350,11 +358,65 @@ export function ChatBar({
 
       {/* Chat panel */}
       <div className={styles.chatPanel}>
+
+        {/* Mobile header — visible only on mobile when open */}
+        <div className={styles.mobileHeader}>
+          <div className={styles.barOpenName}>
+            <NoaIcon />
+            {assistantName}
+          </div>
+          <div className={styles.mobileMenuWrap}>
+            <button
+              className={styles.mobileMenuBtn}
+              onClick={e => { e.stopPropagation(); setMobileMenuOpen(o => !o) }}
+              aria-label="Menu"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+              </svg>
+            </button>
+            {mobileMenuOpen && (
+              <div className={styles.mobileDropdown} onClick={e => e.stopPropagation()}>
+                {privacyModeEnabled && (
+                  <button className={styles.mobileDropItem} onClick={() => { setPrivacyMode(p => !p); setMobileMenuOpen(false) }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                      {privacyMode && <line x1="3" y1="3" x2="21" y2="21"/>}
+                    </svg>
+                    Private session
+                  </button>
+                )}
+                {dataRetentionEnabled && !privacyMode && (
+                  <button className={styles.mobileDropItem} onClick={() => { setRetentionOpen(o => !o); setMobileMenuOpen(false) }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Data retention policy
+                  </button>
+                )}
+                <button className={styles.mobileDropItem} onClick={() => { saveChat(); setMobileMenuOpen(false) }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                  </svg>
+                  Download chat
+                </button>
+                <div className={styles.mobileDropDivider} />
+                <button className={styles.mobileDropItem} onClick={() => { clearChat(); setMobileMenuOpen(false) }}>
+                  New chat
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className={styles.chatInner}>
           {/* Welcome state */}
           <div className={`${styles.chatWelcome}${firstSent ? ` ${styles.sticky}` : ''}`}>
-            <div className={styles.welcomeTitle}>{welcomeTitle}</div>
-            <div className={styles.welcomeSub}>{welcomeSubtitle}</div>
+            <div className={styles.welcomeTextGroup}>
+              <div className={styles.welcomeTitle}>{welcomeTitle}</div>
+              <div className={styles.welcomeSub}>{welcomeSubtitle}</div>
+            </div>
             {!firstSent && (
               <div className={styles.welcomeInputInner}>
                 <div className={`${styles.inputBox}${privacyMode ? ` ${styles.privateMode}` : ''}`}>
@@ -398,8 +460,7 @@ export function ChatBar({
           )}
 
           {/* Bottom input */}
-          {firstSent && (
-            <div className={styles.chatInputArea}>
+          <div className={`${styles.chatInputArea}${!firstSent ? ` ${styles.chatInputHidden}` : ''}`}>
               <div className={`${styles.inputBox}${privacyMode ? ` ${styles.privateMode}` : ''}`}>
                 {privacyMode && <PrivateBadge />}
                 <textarea
@@ -417,7 +478,6 @@ export function ChatBar({
               </div>
               <span className={styles.inputHint}>{inputHint}</span>
             </div>
-          )}
 
           {retentionOpen && (
             <div className={styles.retentionPopup}>

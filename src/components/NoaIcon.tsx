@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 interface NoaIconProps {
   width?: number;
   height?: number;
@@ -5,6 +7,12 @@ interface NoaIconProps {
 }
 
 export function NoaIcon({ width = 24, height = 26, className }: NoaIconProps) {
+  const uid = useId().replace(/:/g, '');
+  const filterId = `filter_${uid}`;
+  const maskBodyId = `mask_body_${uid}`;
+  const maskEye1Id = `mask_eye1_${uid}`;
+  const maskEye2Id = `mask_eye2_${uid}`;
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +24,7 @@ export function NoaIcon({ width = 24, height = 26, className }: NoaIconProps) {
     >
       <defs>
         <filter
-          id="filter0_f_2451_769"
+          id={filterId}
           x="-16.5"
           y="-17.4355"
           width="59.751"
@@ -26,11 +34,11 @@ export function NoaIcon({ width = 24, height = 26, className }: NoaIconProps) {
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-          <feGaussianBlur stdDeviation="4" result="effect1_foregroundBlur_2451_769"/>
+          <feGaussianBlur stdDeviation="4" result="effect1_foregroundBlur"/>
         </filter>
 
         <mask
-          id="mask0_2451_769"
+          id={maskBodyId}
           maskUnits="userSpaceOnUse"
           x="1"
           y="1"
@@ -44,7 +52,7 @@ export function NoaIcon({ width = 24, height = 26, className }: NoaIconProps) {
           />
         </mask>
 
-        <mask id="path-8-inside-1_2451_769" fill="white">
+        <mask id={maskEye1Id} fill="white">
           <ellipse
             cx="14.3284"
             cy="6.12298"
@@ -54,7 +62,7 @@ export function NoaIcon({ width = 24, height = 26, className }: NoaIconProps) {
           />
         </mask>
 
-        <mask id="path-10-inside-2_2451_769" fill="white">
+        <mask id={maskEye2Id} fill="white">
           <ellipse
             cx="18.5243"
             cy="6.12319"
@@ -64,8 +72,8 @@ export function NoaIcon({ width = 24, height = 26, className }: NoaIconProps) {
         </mask>
       </defs>
 
-      <g mask="url(#mask0_2451_769)">
-        <g filter="url(#filter0_f_2451_769)">
+      <g mask={`url(#${maskBodyId})`}>
+        <g filter={`url(#${filterId})`}>
           <circle cx="6.10961" cy="4.3186" r="13.7541" fill="#C4D6EF"/>
           <circle cx="18.7092" cy="21.7756" r="10.2249" fill="#F8EF78"/>
           <circle cx="1.87646" cy="19.6069" r="6.60693" fill="#F8EF78"/>
@@ -85,7 +93,7 @@ export function NoaIcon({ width = 24, height = 26, className }: NoaIconProps) {
         <path
           d="M15.7878 6.04155L14.2902 6.12511C14.2994 6.29121 14.2491 6.39891 14.2194 6.43966C14.2058 6.45818 14.2046 6.45247 14.227 6.43932C14.252 6.42458 14.2936 6.4087 14.3441 6.40588L14.4277 7.90355L14.5113 9.40122C16.4092 9.29534 17.3702 7.47626 17.2855 5.95799L15.7878 6.04155ZM14.4277 7.90355L14.3441 6.40588C14.3947 6.40306 14.4378 6.41421 14.4643 6.42608C14.488 6.43666 14.4874 6.44247 14.4719 6.42557C14.4378 6.38838 14.3758 6.28695 14.3665 6.12085L12.8689 6.2044L11.3712 6.28796C11.4559 7.80622 12.6133 9.50711 14.5113 9.40122L14.4277 7.90355ZM12.8689 6.2044L14.3665 6.12085C14.3573 5.95474 14.4076 5.84705 14.4374 5.80629C14.4509 5.78777 14.4521 5.79349 14.4298 5.80663C14.4047 5.82137 14.3631 5.83725 14.3126 5.84007L14.229 4.3424L14.1455 2.84473C12.2475 2.95062 11.2865 4.7697 11.3712 6.28796L12.8689 6.2044ZM14.229 4.3424L14.3126 5.84007C14.262 5.84289 14.2189 5.83174 14.1924 5.81987C14.1688 5.80929 14.1693 5.80348 14.1848 5.82038C14.2189 5.85757 14.2809 5.959 14.2902 6.12511L15.7878 6.04155L17.2855 5.95799C17.2008 4.43973 16.0434 2.73884 14.1455 2.84473L14.229 4.3424Z"
           fill="#1E1E1E"
-          mask="url(#path-8-inside-1_2451_769)"
+          mask={`url(#${maskEye1Id})`}
         />
 
         <ellipse
@@ -98,7 +106,7 @@ export function NoaIcon({ width = 24, height = 26, className }: NoaIconProps) {
         <path
           d="M19.986 6.12319H18.486C18.486 6.28955 18.4298 6.39428 18.3978 6.43331C18.3832 6.45105 18.3824 6.44527 18.4054 6.43339C18.4312 6.42007 18.4736 6.40653 18.5243 6.40653V7.90653V9.40653C20.4251 9.40653 21.486 7.64381 21.486 6.12319H19.986ZM18.5243 7.90653V6.40653C18.5749 6.40653 18.6173 6.42007 18.6431 6.43339C18.6661 6.44527 18.6653 6.45105 18.6507 6.43331C18.6187 6.39428 18.5625 6.28955 18.5625 6.12319H17.0625H15.5625C15.5625 7.64381 16.6234 9.40653 18.5243 9.40653V7.90653ZM17.0625 6.12319H18.5625C18.5625 5.95682 18.6187 5.8521 18.6507 5.81306C18.6653 5.79533 18.6661 5.8011 18.6431 5.81298C18.6173 5.82631 18.5749 5.83984 18.5243 5.83984V4.33984V2.83984C16.6234 2.83984 15.5625 4.60256 15.5625 6.12319H17.0625ZM18.5243 4.33984V5.83984C18.4736 5.83984 18.4312 5.82631 18.4054 5.81298C18.3824 5.8011 18.3832 5.79533 18.3978 5.81306C18.4298 5.8521 18.486 5.95682 18.486 6.12319H19.986H21.486C21.486 4.60256 20.4251 2.83984 18.5243 2.83984V4.33984Z"
           fill="#1E1E1E"
-          mask="url(#path-10-inside-2_2451_769)"
+          mask={`url(#${maskEye2Id})`}
         />
       </g>
     </svg>
