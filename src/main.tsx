@@ -26,8 +26,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         'What is a cantonal exemption process?',
       ]}
       accentColor="#f8ef78"
-      barBackground="#0e0e0e"
-      chatBackground="#212121"
+      barBackground="#282828"
+      chatBackground="#282828"
       privacyModeEnabled={true}
       dataRetentionEnabled={true}
       dataRetentionDays={7}

@@ -1,5 +1,7 @@
 import React from 'react'
 import { chatBarStyles } from './ChatBar.styles'
+import { NoaIcon } from './NoaIcon';
+
 
 // Maps any property access to the key itself (e.g. styles.aiBar → 'aiBar').
 // This lets the Webflow CLI (webpack, no CSS Modules) and Vite both work
@@ -65,16 +67,6 @@ const DEFAULT_QUESTIONS = [
   'Can you help with canton of St-Gallen?',
   'What is a cantonal exemption process?',
 ]
-
-function NeoPulse() {
-  return (
-    <div className={styles.neoPulse}>
-      <div className={styles.neoPulseRing} />
-      <div className={styles.neoPulseRing} />
-      <div className={styles.neoPulseRing} />
-    </div>
-  )
-}
 
 function RotatingQuestions({ questions }: { questions: string[] }) {
   const [activeIndex, setActiveIndex] = React.useState(0)
@@ -154,7 +146,7 @@ function MessageRow({
         <div
           className={styles.rowContent}
           dangerouslySetInnerHTML={{ __html: escapeHtml(message.content) }}
-          style={{ background: accentColor, color: '#111' } as React.CSSProperties}
+          // style={{ background: accentColor, color: '#111' } as React.CSSProperties}
         />
       </div>
     )
@@ -176,17 +168,17 @@ function MessageRow({
 }
 
 export function ChatBar({
-  assistantName = 'Swisscare Assistant',
+  assistantName = 'Ask Swisscare Assistant',
   welcomeTitle = 'How can I help you today?',
-  welcomeSubtitle = "Need help with your Swisscare plan? I'm here to answer your questions about coverage, options, or eligibility and make sure you get the support you need.",
-  inputPlaceholder = 'Ask Swisscare Assistant…',
+  welcomeSubtitle = "Instant insurance policy ready for your student visa, university, authorities or any other institution.",
+  inputPlaceholder = 'Ask anything',
   inputHint = 'Official insurance documents always prevail.',
   sampleQuestions = DEFAULT_QUESTIONS,
   poweredByText: _poweredByText = '',
   poweredByUrl: _poweredByUrl = '',
   accentColor = '#f8ef78',
-  barBackground = '#0e0e0e',
-  chatBackground = '#212121',
+  barBackground = '#282828',
+  chatBackground = '#282828',
   privacyModeEnabled = true,
   dataRetentionDays = 7,
   dataRetentionEnabled = true,
@@ -342,7 +334,7 @@ export function ChatBar({
       <style>{chatBarStyles}</style>
       {/* Top bar — visible only when open */}
       <div className={styles.aiTopbar}>
-        <div className={styles.aiTopbarLogo}>{assistantName}</div>
+        <div className={styles.aiTopbarLogo}> {/*{assistantName}*/} </div>
         <button
           className={styles.chClose}
           data-testid="close-btn"
@@ -376,7 +368,7 @@ export function ChatBar({
                     rows={1}
                   />
                   <button className={styles.inputSend} onClick={handleSend} disabled={isBusy || !inputValue.trim()} aria-label="Send">
-                    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    <svg viewBox="0 0 16 16"><path d="M8 15V1M8 1L1 8M8 1L15 8" stroke="" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </button>
                 </div>
                 <span className={styles.inputHint}>{inputHint}</span>
@@ -420,7 +412,7 @@ export function ChatBar({
                   disabled={isBusy}
                 />
                 <button className={styles.inputSend} onClick={handleSend} disabled={isBusy || !inputValue.trim()} aria-label="Send">
-                  <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                  <svg viewBox="0 0 16 16"><path d="M8 15V1M8 1L1 8M8 1L15 8" stroke="" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </button>
               </div>
               <span className={styles.inputHint}>{inputHint}</span>
@@ -469,44 +461,33 @@ export function ChatBar({
       {/* Bottom bar — always visible */}
       <div
         className={`${styles.barStrip} ${styles.auroraOn}`}
-        onClick={handleToggle}
       >
-        {/* Aurora blobs */}
-        <div className={`${styles.auroraBlob} ${styles.auroraBlob1}`} />
-        <div className={`${styles.auroraBlob} ${styles.auroraBlob2}`} />
-        <div className={`${styles.auroraBlob} ${styles.auroraBlob3}`} />
-        <div className={`${styles.auroraBlob} ${styles.auroraBlob4}`} />
 
         {/* Closed content */}
         <div className={styles.barClosedContent}>
-          <NeoPulse />
           <div className={styles.barText}>
+            <NoaIcon />
             <span className={styles.barTextName}>{assistantName}</span>
-            <span className={styles.barTextSep}>|</span>
             <RotatingQuestions questions={sampleQuestions} />
           </div>
           <button
             className={styles.neoSend}
-            onClick={e => { e.stopPropagation(); handleToggle() }}
+            onClick={handleToggle}
             aria-label="Open chat"
           >
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 20V4M12 4L5 11M12 4L19 11" stroke="#111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="#111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
         </div>
 
         {/* Open content (settings bar) — rendered inside barStrip when open */}
         <div className={styles.barOpenContent}>
-          <NeoPulse />
           <div className={styles.barOpenLeft}>
+            <NoaIcon />
             <div className={styles.barOpenName}>{assistantName}</div>
           </div>
           <div className={styles.barOpenSettings}>
-            <button className={styles.chBtn} onClick={e => { e.stopPropagation(); clearChat() }}>
-              New chat
-            </button>
-            <div className={styles.chDivider} />
             {privacyModeEnabled && (
               <button
                 className={`${styles.chIconBtn} ${styles.chEyeBtn}${privacyMode ? ` ${styles.active}` : ''}`}
@@ -523,7 +504,6 @@ export function ChatBar({
             )}
             {dataRetentionEnabled && !privacyMode && (
               <>
-                <div className={styles.chDivider} />
                 <div
                   className={`${styles.chRetention}${retentionOpen ? ` ${styles.active}` : ''}`}
                   onClick={e => { e.stopPropagation(); setRetentionOpen(o => !o) }}
@@ -533,7 +513,6 @@ export function ChatBar({
                   </svg>
                   <span className={styles.chRetentionLabel}>{dataRetentionDays} days</span>
                 </div>
-                <div className={styles.chDivider} />
               </>
             )}
 
@@ -547,6 +526,13 @@ export function ChatBar({
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
               </svg>
+            </button>
+
+            <div className={styles.chDivider} />
+
+            {/* New chat button */}
+            <button className={styles.chBtn} onClick={e => { e.stopPropagation(); clearChat() }}>
+              New chat
             </button>
           </div>
         </div>

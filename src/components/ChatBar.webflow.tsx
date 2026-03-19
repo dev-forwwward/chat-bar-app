@@ -67,11 +67,11 @@ export default declareComponent(WebflowChatBar, {
     }),
     barBackground: props.Text({
       name: 'Bar Background Color',
-      defaultValue: '#0e0e0e',
+      defaultValue: '#282828',
     }),
     chatBackground: props.Text({
       name: 'Chat Background Color',
-      defaultValue: '#212121',
+      defaultValue: '#282828',
     }),
     dataRetentionDays: props.Number({
       name: 'Data Retention Days',
