@@ -628,11 +628,7 @@ export const chatBarStyles = `@font-face {
   }
 
   .chatWelcome.sticky {
-    position: static;
-    flex: 1;
-    justify-content: center;
-    padding: 40px 20px;
-    border-bottom: none;
+    display: none;
   }
 }
 
