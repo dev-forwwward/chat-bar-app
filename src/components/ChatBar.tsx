@@ -132,12 +132,10 @@ function MessageRow({
   message,
   assistantName,
   isStreaming,
-  accentColor,
 }: {
   message: Message
   assistantName: string
   isStreaming: boolean
-  accentColor: string
 }) {
   if (message.role === 'user') {
     return (
@@ -447,7 +445,6 @@ export function ChatBar({
                   message={msg}
                   assistantName={assistantName}
                   isStreaming={msg.id === streamingId}
-                  accentColor={accentColor}
                 />
               ))}
               {isBusy && streamingId && messages.find(m => m.id === streamingId)?.content === '' && (
