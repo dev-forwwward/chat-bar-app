@@ -210,6 +210,7 @@ export const chatBarStyles = `@font-face {
   padding: 0 20px;
   user-select: none;
   position: relative;
+  transition: height 0.3s ease, min-height 0.3s ease;
 }
 
 .aiBar.open .barStrip {
@@ -615,6 +616,20 @@ export const chatBarStyles = `@font-face {
     right: 16px;
     bottom: 70px;
     width: auto;
+  }
+
+  .aiBar.open .barStrip {
+    height: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .chatWelcome.sticky {
+    position: static;
+    flex: 1;
+    justify-content: center;
+    padding: 40px 20px;
+    border-bottom: none;
   }
 }
 
@@ -1196,6 +1211,10 @@ export const chatBarStyles = `@font-face {
   flex-direction: column;
   align-items: center;
   gap: 8px;
+}
+
+.chatInputHidden {
+  display: none;
 }
 
 .inputBox {
