@@ -1112,6 +1112,10 @@ export const chatBarStyles = `@font-face {
   flex: 1;
   padding: 40px 20px;
   gap: 1rem;
+
+  @media screen and (max-width: 767px) {
+    padding: 0 1.5rem;
+  }
 }
 
 .chatWelcome.sticky {
@@ -1121,6 +1125,17 @@ export const chatBarStyles = `@font-face {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.welcomeTextGroup {
+  @media screen and (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: center;
+    gap: 1rem;
+  }
+}
+
+
 .welcomeInputInner {
   display: flex;
   flex-flow: column;
@@ -1128,6 +1143,12 @@ export const chatBarStyles = `@font-face {
   width: 100%;
   max-width: 34.0625rem;
   margin-top: 1.5rem;
+
+  @media screen and (max-width: 767px) {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    gap: 8px;
+  }
 }
 
 .welcomeInputWrap {
@@ -1210,6 +1231,12 @@ export const chatBarStyles = `@font-face {
   flex-direction: column;
   align-items: center;
   gap: 8px;
+
+  @media screen and (max-width: 767px) {
+    position: sticky;
+    bottom: 0;
+    padding: 0 1.5rem 1rem;
+  }
 }
 
 .chatInputHidden {
@@ -1229,6 +1256,10 @@ export const chatBarStyles = `@font-face {
   gap: 10px;
   transition: border-color .3s ease;
   position: relative;
+
+  @media screen and (max-width: 767px) {
+      flex-direction: row;
+  }
 }
 
 .inputBox.privateMode {
@@ -1285,6 +1316,11 @@ export const chatBarStyles = `@font-face {
   min-height: 3rem;
   /* max-height: 200px; */
   scrollbar-width: none;
+
+  @media screen and (max-width: 767px) {
+    min-height: 2rem;
+  }
+
 }
 
 .inputBox textarea::-webkit-scrollbar {
@@ -1358,6 +1394,10 @@ export const chatBarStyles = `@font-face {
   width: 100%;
   display: block;
   margin-top: 8px;
+
+  @media screen and (max-width: 767px) {
+    margin-top: 0;
+  }
 }
 
 .barTextSep {
