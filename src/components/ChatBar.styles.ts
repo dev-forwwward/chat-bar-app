@@ -1126,13 +1126,14 @@ export const chatBarStyles = `@font-face {
 }
 
 .welcomeTextGroup {
-  @media screen and (max-width: 767px) {
     display: flex;
     flex-direction: column;
-    flex: 1;
     justify-content: center;
+    align-items: center;
     gap: 1rem;
-  }
+    @media screen and (max-width: 767px) {
+      flex: 1;
+    }
 }
 
 
