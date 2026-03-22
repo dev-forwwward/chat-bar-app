@@ -8,7 +8,8 @@ export const chatBarStyles = `@font-face {
   font-display: swap;
 }
 
-:root {
+:root,
+.aiBar {
   --Seashell: #FDEEE9;
   --Maize: #F8EF78;
   --persian-pink: #ff99cd;
