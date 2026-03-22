@@ -25,9 +25,6 @@ export interface ChatBarProps {
   sampleQuestions?: string[]
   poweredByText?: string
   poweredByUrl?: string
-  accentColor?: string
-  barBackground?: string
-  chatBackground?: string
   privacyModeEnabled?: boolean
   dataRetentionDays?: number
   dataRetentionEnabled?: boolean
@@ -174,9 +171,6 @@ export function ChatBar({
   sampleQuestions = DEFAULT_QUESTIONS,
   poweredByText: _poweredByText = '',
   poweredByUrl: _poweredByUrl = '',
-  accentColor = '#f8ef78',
-  barBackground = '#282828',
-  chatBackground = '#282828',
   privacyModeEnabled = true,
   dataRetentionDays = 7,
   dataRetentionEnabled = true,
@@ -331,11 +325,6 @@ export function ChatBar({
     <div
       id="ai-bar"
       className={`${styles.aiBar}${isOpen ? ` ${styles.open}` : ''}`}
-      style={{
-        '--accent': accentColor,
-        '--bar-bg': barBackground,
-        '--chat-bg': chatBackground,
-      } as React.CSSProperties}
     >
       <style>{chatBarStyles}</style>
       {/* Top bar — visible only when open */}

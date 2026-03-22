@@ -11,9 +11,6 @@ interface WebflowChatBarProps {
   inputPlaceholder?: string
   inputHint?: string
   sampleQuestions?: string
-  accentColor?: string
-  barBackground?: string
-  chatBackground?: string
   dataRetentionDays?: number
   privacyModeEnabled?: boolean
   dataRetentionEnabled?: boolean
@@ -60,18 +57,6 @@ export default declareComponent(WebflowChatBar, {
       name: 'Sample Questions (comma-separated)',
       defaultValue:
         'How much cost the insurance in Spain?,Can you help with canton of St-Gallen?,What is a cantonal exemption process?',
-    }),
-    accentColor: props.Text({
-      name: 'Accent Color',
-      defaultValue: '#f8ef78',
-    }),
-    barBackground: props.Text({
-      name: 'Bar Background Color',
-      defaultValue: '#282828',
-    }),
-    chatBackground: props.Text({
-      name: 'Chat Background Color',
-      defaultValue: '#282828',
     }),
     dataRetentionDays: props.Number({
       name: 'Data Retention Days',

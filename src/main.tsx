@@ -25,9 +25,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         'Can you help with canton of St-Gallen?',
         'What is a cantonal exemption process?',
       ]}
-      accentColor="#f8ef78"
-      barBackground="#282828"
-      chatBackground="#282828"
       privacyModeEnabled={true}
       dataRetentionEnabled={true}
       dataRetentionDays={7}
