@@ -87,6 +87,9 @@ export const chatBarStyles = `@font-face {
   @media (max-width: 767px) {
     opacity: 1;
     pointer-events: auto;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 }
 
