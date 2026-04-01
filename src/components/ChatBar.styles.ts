@@ -1122,10 +1122,7 @@ export const chatBarStyles = `@font-face {
 }
 
 .chatWelcome.sticky {
-  flex: 0;
-  justify-content: flex-start;
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: none;
 }
 
 .welcomeTextGroup {
