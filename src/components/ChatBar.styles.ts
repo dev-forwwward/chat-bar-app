@@ -41,6 +41,7 @@ export const chatBarStyles = `@font-face {
   transition: height .5s cubic-bezier(.4, 0, .2, 1);
   overflow: hidden;
   background: var(--chat-bg);
+  cursor: pointer;
 }
 
 .aiBar.open {
@@ -256,6 +257,7 @@ export const chatBarStyles = `@font-face {
 .aiBar.open .barClosedContent {
   opacity: 0;
   pointer-events: none;
+  z-index: 0;
 }
 
 .barOpenContent {

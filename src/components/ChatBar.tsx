@@ -512,7 +512,7 @@ export function ChatBar({
       >
 
         {/* Closed content */}
-        <div className={styles.barClosedContent}>
+        <div className={styles.barClosedContent} onClick={handleToggle}>
           <div className={styles.barText}>
             <NoaIcon />
             <span className={styles.barTextName}>{assistantName}</span>
@@ -520,7 +520,6 @@ export function ChatBar({
           </div>
           <button
             className={styles.neoSend}
-            onClick={handleToggle}
             aria-label="Open chat"
           >
             <svg viewBox="0 0 24 24" fill="none">
