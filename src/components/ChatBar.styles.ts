@@ -41,7 +41,6 @@ export const chatBarStyles = `@font-face {
   transition: height .5s cubic-bezier(.4, 0, .2, 1);
   overflow: hidden;
   background: var(--chat-bg);
-  cursor: pointer;
 }
 
 .aiBar.open {
@@ -248,6 +247,7 @@ export const chatBarStyles = `@font-face {
   padding: 0 20px;
   z-index: 2;
   transition: opacity .25s ease;
+  cursor: pointer;
 
   @media screen and (max-width: 767px) {
     justify-content: space-between;
