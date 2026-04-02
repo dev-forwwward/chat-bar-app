@@ -335,7 +335,6 @@
 .barOpenSettings {
   display: flex;
   align-items: center;
-  gap: 1rem;
 }
 
 .barStrip::after {
@@ -567,30 +566,47 @@
   gap: 10px;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 .chRetention {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-family: 'Inter', sans-serif;
   white-space: nowrap;
   cursor: pointer;
   position: static;
   color: rgba(255, 255, 255, 1);
   transition: color .2s;
   user-select: none;
+  padding: .5rem .75rem;
+  gap: .25rem;
+  border-radius: 3rem;
+  font-family: 'Inter', sans-serif;
+  font-size: .85rem;
 }
 
 .chRetention:hover {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .chRetention.active {
-  color: var(--Maize);
+  /* color: var(--Maize); */
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .chRetention svg {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
 }
 
@@ -771,6 +787,7 @@
   height: 2rem;
   background: rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
+  margin: 0 1rem;
 }
 
 .chBtn {
@@ -795,11 +812,37 @@
   background-color: var(--persian-pink);
 }
 
-.chEyeBtn {
+.chIconBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 1);
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: color .2s, background .2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.chIconBtn:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chIconBtn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.privacyBtn {
   position: relative;
 }
 
-.chEyeBtn::after {
+.privacyBtn::after {
   content: "Private session — Once activated, your conversation will not be saved or logged on Swisscare's side.";
   position: absolute;
   bottom: calc(100% + 10px);
@@ -824,7 +867,7 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
-.chEyeBtn::before {
+.privacyBtn::before {
   content: '';
   position: absolute;
   bottom: calc(100% + 4px);
@@ -837,72 +880,49 @@
   z-index: 9999;
 }
 
-.chEyeBtn:hover::after,
-.chEyeBtn:hover::before {
+.privacyBtn:hover::after,
+.privacyBtn:hover::before {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 1s;
 }
 
-.chEyeBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.3);
-  width: 26px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: color .2s, background .2s;
-  flex-shrink: 0;
-  padding: 0;
-}
-
-.chEyeBtn:hover {
-  color: rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.chEyeBtn.active {
-  color: var(--Maize) !important;
-}
-
-.chEyeBtn.active svg {
-  filter: drop-shadow(0 0 4px rgba(248, 239, 120, 0.45));
-}
-
-.chEyeBtn svg {
-  width: 13px;
-  height: 13px;
-  flex-shrink: 0;
-}
-
-.chIconBtn {
+.privacyBtn {
   background: transparent;
   border: none;
   cursor: pointer;
   color: rgba(255, 255, 255, 1);
-  width: 26px;
-  height: 26px;
+  width: auto;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
   transition: color .2s, background .2s;
   flex-shrink: 0;
-  padding: 0;
+  padding: .5rem .75rem;
+  gap: .25rem;
+  border-radius: 3rem;
+  font-size: .85rem;
 }
 
-.chIconBtn:hover {
-  color: rgba(255, 255, 255, 0.8);
+.privacyBtn:hover {
+  color: rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.05);
 }
 
-.chIconBtn svg {
-  width: 1.25rem;
-  height: 1.25rem;
+.privacyBtn.active {
+  /* color: var(--Maize) !important; */
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.privacyBtn.active svg {
+  filter: drop-shadow(0 0 4px rgba(248, 239, 120, 0.45));
+}
+
+.privacyBtn svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
 }
 
 .chClose {
@@ -1261,10 +1281,10 @@
   }
 }
 
-.inputBox.privateMode {
+/* .inputBox.privateMode {
   border: 1px dashed rgba(248, 239, 120, 0.35);
   box-shadow: none;
-}
+} */
 
 .privateBadge {
   position: absolute;
